@@ -10,11 +10,12 @@ export default function Home() {
     <>
       <Authenticated>
         <UserButton />
-        <p> insider</p>
+        <p>Welcome back!</p>
       </Authenticated>
       <Unauthenticated>
         <SignInButton />
       </Unauthenticated>
+
     </>
   );
 }

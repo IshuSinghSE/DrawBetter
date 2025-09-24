@@ -19,11 +19,11 @@ export const ConvexClientProvider = ({
   return (
     <ClerkProvider>
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <Authenticated>{children}</Authenticated>
+        {children}
         <AuthLoading>
           <Loading />
         </AuthLoading>
-      </ConvexProviderWithClerk>
+      </ConvexProviderWithClerk> 
     </ClerkProvider>
   );
 };
