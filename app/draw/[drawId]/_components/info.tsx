@@ -1,4 +1,5 @@
 
+
 import React from 'react'
 
 const Info = () => {
@@ -10,3 +11,18 @@ const Info = () => {
 }
 
 export default Info
+
+
+Info.Skeleton = function InfoSkeleton() {
+
+  return (
+      <div className='absolute top-2 left-2
+       bg-white rounded-md px-1.5 flex items-center shadow-md h-12
+       w-[300px]
+       '/>
+ 
+
+  );
+
+
+}
