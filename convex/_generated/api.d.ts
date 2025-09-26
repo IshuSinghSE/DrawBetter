@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as draw from "../draw.js";
+import type * as draws from "../draws.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -25,6 +26,7 @@ import type * as draw from "../draw.js";
  */
 declare const fullApi: ApiFromModules<{
   draw: typeof draw;
+  draws: typeof draws;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
