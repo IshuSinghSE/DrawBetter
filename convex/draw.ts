@@ -59,6 +59,19 @@ export const remove = mutation({
     if (!identity) {
       throw new Error("Not authenticated");
     }
+
+    const userId = identity.subject;
+
+    const existingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_draw", (q) =>
+        q.eq("userId", userId).eq("drawId", args.id)
+      )
+      .unique();
+
+    if (existingFavorite) {
+      await ctx.db.delete(existingFavorite._id);
+    }
     await ctx.db.delete(args.id);
   },
 });
@@ -106,8 +119,8 @@ export const favorite = mutation({
 
     const existingFavorite = await ctx.db
       .query("userFavorites")
-      .withIndex("by_user_draw_org", (q) =>
-        q.eq("userId", userId).eq("drawId", draw._id).eq("orgId", args.orgId)
+      .withIndex("by_user_draw", (q) =>
+        q.eq("userId", userId).eq("drawId", draw._id)
       )
       .unique();
 
@@ -157,5 +170,3 @@ export const unfavorite = mutation({
     return draw;
   },
 });
-
-
