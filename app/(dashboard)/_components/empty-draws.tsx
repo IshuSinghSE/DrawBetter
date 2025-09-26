@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
+import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useOrganization } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import Image from "next/image";
@@ -11,13 +12,13 @@ import React from "react";
 
 const EmptyDraws = () => {
   const { organization } = useOrganization();
-  const create = useMutation(api.draw.create);
+  const {mutate, pending} = useApiMutation(api.draw.create);
 
   const onClick = () => {
     
     if (!organization) return;
     
-    create({
+    mutate({
       orgId: organization.id,
       title: "Untitled"
     });
@@ -35,7 +36,7 @@ const EmptyDraws = () => {
       </p>
 
       <div className="mt-6">
-        <Button onClick={onClick} size={"lg"}>
+        <Button disabled={pending} onClick={onClick} size={"lg"}>
           Create Draw
           </Button>
       </div>
