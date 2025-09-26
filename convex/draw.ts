@@ -87,3 +87,75 @@ export const rename = mutation({
     return draw;
   },
 });
+
+export const favorite = mutation({
+  args: { id: v.id("draw"), orgId: v.string() },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const draw = await ctx.db.get(args.id);
+
+    if (!draw) {
+      throw new Error("Draw not found");
+    }
+
+    const userId = identity.subject;
+
+    const existingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_draw_org", (q) =>
+        q.eq("userId", userId).eq("drawId", draw._id).eq("orgId", args.orgId)
+      )
+      .unique();
+
+    if (existingFavorite) {
+      throw new Error("Already favorited");
+    }
+
+    await ctx.db.insert("userFavorites", {
+      orgId: args.orgId,
+      userId: userId,
+      drawId: draw._id,
+    });
+
+    return draw;
+  },
+});
+
+export const unfavorite = mutation({
+  args: { id: v.id("draw") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    const draw = await ctx.db.get(args.id);
+
+    if (!draw) {
+      throw new Error("Draw not found");
+    }
+
+    const userId = identity.subject;
+
+    const existingFavorite = await ctx.db
+      .query("userFavorites")
+      .withIndex("by_user_draw", (q) =>
+        q.eq("userId", userId).eq("drawId", draw._id)
+      )
+      .unique();
+
+    if (!existingFavorite) {
+      throw new Error("Favorite not found");
+    }
+
+    await ctx.db.delete(existingFavorite._id);
+
+    return draw;
+  },
+});
+
+

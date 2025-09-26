@@ -14,6 +14,23 @@ export const get = query({
       .withIndex("by_org", (q) => q.eq("orgId", args.orgId))
       .order("desc")
       .collect();
-    return draws;
+
+    const drawsWithFavoriteRelateion = draws.map((draw) => {
+      return ctx.db
+        .query("userFavorites")
+        .withIndex("by_user_draw", (q) =>
+          q.eq("userId", identity.subject).eq("drawId", draw._id)
+        )
+        .unique()
+        .then((favorite) => {
+          return {
+            ...draw,
+            isFavorite: !!favorite,
+          };
+        });
+    });
+
+    const drawsWithFavoriteBoolean = Promise.all(drawsWithFavoriteRelateion);
+    return drawsWithFavoriteBoolean;
   },
 });

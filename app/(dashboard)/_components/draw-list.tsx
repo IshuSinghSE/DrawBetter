@@ -71,7 +71,7 @@ export default function DrawList({ orgId, query }: DrawListProps) {
             authorName={draw.authorName}
             createdAt={draw._creationTime}
             orgId={draw.orgId}
-            isFavorite={false}
+            isFavorite={draw.isFavorite}
           />
         ))}
       </div>
