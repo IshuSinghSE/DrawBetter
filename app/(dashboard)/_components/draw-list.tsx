@@ -14,7 +14,7 @@ interface DrawListProps {
 }
 
 export default function DrawList({ orgId, query }: DrawListProps) {
-  const data = useQuery(api.draws.get, { orgId });
+  const data = useQuery(api.draws.get, { orgId , search: query.search });
 
   if (data === undefined) {
     return (
