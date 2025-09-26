@@ -6,6 +6,7 @@ import { Overlay } from "./overlay";
 import { formatDistanceToNow } from "date-fns";
 import { useAuth } from "@clerk/nextjs";
 import Footer from "./footer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DrawCardProps {
   id: string;
@@ -45,17 +46,27 @@ export const DrawCard = ({
           <Image src={imageUrl} alt={title} fill className="object-fit" />
           <Overlay />
         </div>
-        <Footer 
-        isFavorite={isFavorite}
-        title={title}
-        authorLabel={authorLabel}
-        createdAtLabel={createdAtLabel}
-        onClick={() => {}}
-        disabled={false}
-        
+        <Footer
+          isFavorite={isFavorite}
+          title={title}
+          authorLabel={authorLabel}
+          createdAtLabel={createdAtLabel}
+          onClick={() => {}}
+          disabled={false}
         />
-
       </div>
     </Link>
+  );
+};
+
+DrawCard.Skeleton = function DrawCardSkeleton() {
+  return (
+    <div
+      className="aspect-[100/127] rounded-lg
+           overflow-hidden justify-between
+           "
+    >
+      <Skeleton className="h-full w-full" />
+    </div>
   );
 };

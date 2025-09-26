@@ -17,7 +17,28 @@ export default function DrawList({ orgId, query }: DrawListProps) {
   const data = useQuery(api.draws.get, { orgId });
 
   if (data === undefined) {
-    return <div>Loading...</div>;
+    return (
+      <div>
+        <h2 className="text-3xl">
+          {query.favorites ? "Favorite Draws" : "Team Draws"}
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 mt-8 pb-10">
+          <NewDrawButton orgId={orgId} disabled />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+          <DrawCard.Skeleton />
+        </div>
+
+      </div>
+    );
   }
 
   if (!data?.length && query.search) {
