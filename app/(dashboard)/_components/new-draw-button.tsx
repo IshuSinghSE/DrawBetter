@@ -4,6 +4,7 @@ import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { cn } from "@/lib/utils";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface NewDrawButtonProps {
@@ -12,6 +13,7 @@ interface NewDrawButtonProps {
 }
 
 export const NewDrawButton = ({ orgId, disabled }: NewDrawButtonProps) => {
+  const router = useRouter();
   const { mutate, pending } = useApiMutation(api.draw.create);
   const OnClick = () => {
     mutate({
@@ -20,6 +22,7 @@ export const NewDrawButton = ({ orgId, disabled }: NewDrawButtonProps) => {
     })
       .then((id) => {
         toast.success("Draw created");
+        router.push(`/draw/${id}`);
       })
       .catch(() => {
         toast.error("Error creating draw");

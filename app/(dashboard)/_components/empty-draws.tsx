@@ -6,10 +6,12 @@ import { useApiMutation } from "@/hooks/use-api-mutation";
 import { useOrganization } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
 
 const EmptyDraws = () => {
+  const router = useRouter();
   const { organization } = useOrganization();
   const { mutate, pending } = useApiMutation(api.draw.create);
 
@@ -22,6 +24,7 @@ const EmptyDraws = () => {
     })
       .then((id) => {
         toast.success("Draw created!");
+        router.push(`/draw/${id}`);
       })
       .catch(() => {
         toast.error("Failed to create draw");

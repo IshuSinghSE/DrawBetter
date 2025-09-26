@@ -14,7 +14,9 @@ interface DrawListProps {
 }
 
 export default function DrawList({ orgId, query }: DrawListProps) {
-  const data = useQuery(api.draws.get, { orgId , search: query.search });
+  const data = useQuery(api.draws.get, { orgId, 
+    ...query
+   });
 
   if (data === undefined) {
     return (
@@ -36,7 +38,6 @@ export default function DrawList({ orgId, query }: DrawListProps) {
           <DrawCard.Skeleton />
           <DrawCard.Skeleton />
         </div>
-
       </div>
     );
   }
