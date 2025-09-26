@@ -1,0 +1,13 @@
+import React from 'react'
+
+const Participants = () => {
+  return (
+    <div
+    className='absolute h-12 top-2 right-2 rounded-md bg-white p-3 flex items-center shadow-md'
+    >
+      List of Users
+    </div>
+  )
+}
+
+export default Participants
