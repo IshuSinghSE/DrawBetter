@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/logo.svg" alt="DrawBetter Logo" width="400" height="auto">
+  <img src="public/logo-white.svg" alt="DrawBetter Logo" width="400" height="auto">
 </div>
 
 <div align="center">
