@@ -1,23 +1,19 @@
-
-import React from 'react'
-import Canvas from './_components/canvas'
+import React from "react";
+import Canvas from "./_components/canvas";
+import { Room } from "@/components/room";
 
 interface DrawIdPageProps {
-
-    params: {
-        drawId: string
-    }
-
+  params: {
+    drawId: string;
+  };
 }
 
 const DrawIdPage = ({ params }: DrawIdPageProps) => {
   return (
-   
-      <Canvas 
-      drawId={params.drawId}
-      />
+    <Room roomId={params.drawId}>
+      <Canvas drawId={params.drawId} />
+    </Room>
+  );
+};
 
-  )
-}
-
-export default DrawIdPage
+export default DrawIdPage;
