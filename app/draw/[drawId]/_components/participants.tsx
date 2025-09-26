@@ -14,7 +14,7 @@ const Participants = () => {
 export default Participants
 
 
-Participants.Skeleton = function ParticipantsSkeleton() {
+export const ParticipantsSkeleton = () => {
   return (
       <div
     className='absolute h-12 top-2 right-2 rounded-md bg-white p-3 flex items-center shadow-md w-[100px]'

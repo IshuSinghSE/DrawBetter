@@ -26,7 +26,7 @@ const ToolBar = () => {
 
 export default ToolBar;
 
-ToolBar.Skeleton = function ToolBarSkeleton() {
+export const ToolBarSkeleton = () => {
   return (
     <div
       className="absolute top-[50%]
