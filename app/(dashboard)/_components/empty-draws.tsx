@@ -7,23 +7,26 @@ import { useOrganization } from "@clerk/nextjs";
 import { useMutation } from "convex/react";
 import Image from "next/image";
 import React from "react";
-
-
+import { toast } from "sonner";
 
 const EmptyDraws = () => {
   const { organization } = useOrganization();
-  const {mutate, pending} = useApiMutation(api.draw.create);
+  const { mutate, pending } = useApiMutation(api.draw.create);
 
   const onClick = () => {
-    
     if (!organization) return;
-    
+
     mutate({
       orgId: organization.id,
-      title: "Untitled"
-    });
+      title: "Untitled",
+    })
+      .then((id) => {
+        toast.success("Draw created!");
+      })
+      .catch(() => {
+        toast.error("Failed to create draw");
+      });
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -38,7 +41,7 @@ const EmptyDraws = () => {
       <div className="mt-6">
         <Button disabled={pending} onClick={onClick} size={"lg"}>
           Create Draw
-          </Button>
+        </Button>
       </div>
     </div>
   );
