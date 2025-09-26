@@ -1,5 +1,9 @@
 "use client";
 
+import EmptyDraws from "./empty-draws";
+import EmptyFavorites from "./empty-favorites";
+import EmptySearch from "./empty-search";
+
 interface DrawListProps {
   orgId: string;
   query: { search?: string; favorites?: string };
@@ -12,26 +16,20 @@ export default function DrawList({ orgId, query }: DrawListProps) {
   
   if (!data?.length && query.search) {
     return (
-        <div>
-            Try searching for something else.
-        </div>
+        <EmptySearch />
     );
   }
 
 
   if (!data?.length && query.favorites) {
     return (
-        <div>
-            You have no favorite draws.
-        </div>
+        <EmptyFavorites />
     );
     }
 
     if (!data?.length) {
         return (
-            <div>
-                You have no draws yet.
-            </div>
+           <EmptyDraws />
         );
     }
 
