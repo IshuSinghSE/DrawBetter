@@ -104,3 +104,12 @@ export function findIntersectingLayersWithRectangle(
 
   return ids;
 }
+
+
+export function getContrastingTextColor(backgroundColor: Color){
+
+  const luminance = (0.299 * backgroundColor.r + 0.587 * backgroundColor.g + 0.114 * backgroundColor.b);
+
+  return luminance > 182 ? "black" : "white";
+
+}
