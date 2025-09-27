@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Info from "./info";
 import Participants from "./participants";
 import ToolBar from "./toolbar";
@@ -38,6 +38,8 @@ import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
 import { Path } from "./path";
+import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
+import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
 const MAX_LAYERS = 100;
 
@@ -61,6 +63,8 @@ const Canvas = ({ drawId }: CanvasProps) => {
     g: 255,
     b: 255,
   });
+
+  useDisableScrollBounce();
 
   const history = useHistory();
   const canUndo = useCanUndo();
@@ -442,6 +446,30 @@ const Canvas = ({ drawId }: CanvasProps) => {
     return layerIdsToColorSelection;
   }, [selections]);
 
+  const deleteLayers = useDeleteLayers();
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      switch (e.key) {
+        case "z": {
+          if (e.ctrlKey || e.metaKey) {
+            if (e.shiftKey) {
+              history.redo();
+            } else {
+              history.undo();
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [deleteLayers, history]);
+
   return (
     <main className="h-full w-full relative bg-neutral-100 touch-none">
       <Info drawId={drawId} />
@@ -492,21 +520,15 @@ const Canvas = ({ drawId }: CanvasProps) => {
             )}
 
           <CursorsPresence />
-          
+
           {pencilDraft != null && pencilDraft.length > 0 && (
-
             <Path
-            points={pencilDraft}
-            fill={colorToCss(lastUsedColor)}
-            x={0}
-            y={0}
-            
-
+              points={pencilDraft}
+              fill={colorToCss(lastUsedColor)}
+              x={0}
+              y={0}
             />
-
           )}
-
-
         </g>
       </svg>
     </main>
