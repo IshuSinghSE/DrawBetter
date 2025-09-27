@@ -15,6 +15,11 @@ import { useSelf } from "@liveblocks/react/suspense";
 import { CursorsPresence } from "./cursors-presence";
 import { pointerEventToCanvasPoint } from "@/lib/utils";
 
+const MAX_LAYERS = 100;
+
+
+
+
 interface CanvasProps {
   drawId: string;
 }
@@ -72,7 +77,11 @@ const Canvas = ({ drawId }: CanvasProps) => {
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
       >
-        <g>
+        <g
+          style={{
+            transform: `translate(${camera.x}px , ${camera.y}px)`,
+          }}
+        >
           <CursorsPresence />
         </g>
       </svg>
