@@ -57,8 +57,8 @@ export default function NotFound() {
             Oops! Page Not Found
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-md mx-auto">
-            Looks like this drawing got lost in the canvas. Let's get you back
-            to creating something amazing!
+            Looks like this drawing got lost in the canvas. Let&apos;s get you
+            back to creating something amazing!
           </p>
         </motion.div>
 

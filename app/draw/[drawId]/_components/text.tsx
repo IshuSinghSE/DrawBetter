@@ -1,7 +1,7 @@
 import { cn, colorToCss } from "@/lib/utils";
 import { useMutation } from "@/liveblocks.config";
 import { Kalam } from "next/font/google";
-import contentEditable, { ContentEditableEvent } from "react-contenteditable";
+import { ContentEditableEvent } from "react-contenteditable";
 import { TextLayer } from "@/types/canvas";
 import ContentEditable from "react-contenteditable";
 
