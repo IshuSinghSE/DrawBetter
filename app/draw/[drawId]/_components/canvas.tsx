@@ -25,6 +25,7 @@ import { connectionIdToColor, pointerEventToCanvasPoint } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
+import { SelectionBox } from "./selection-box";
 
 const MAX_LAYERS = 100;
 
@@ -42,9 +43,9 @@ const Canvas = ({ drawId }: CanvasProps) => {
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
 
   const [lastUsedColor, setLastUsedColor] = useState<Color>({
-    r: 0,
-    g: 0,
-    b: 0,
+    r: 255,
+    g: 255,
+    b: 255,
   });
 
   const history = useHistory();
@@ -217,6 +218,9 @@ const Canvas = ({ drawId }: CanvasProps) => {
             />
           ))}
 
+          <SelectionBox
+            onResizeHandlePointerDown={() => {}}
+          />
           <CursorsPresence />
         </g>
       </svg>
