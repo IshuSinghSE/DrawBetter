@@ -5,6 +5,8 @@ import { ClientSideSuspense } from "@liveblocks/react";
 import { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, Lock } from "lucide-react";
+import { LiveMap, LiveList, LiveObject } from "@liveblocks/client";
+import { Layer } from "@/types/canvas";
 
 interface RoomProps {
   children: ReactNode;
@@ -89,11 +91,16 @@ const RoomErrorHandler = ({ children }: { children: ReactNode }) => {
 
 export const Room = ({ children, roomId, fallback }: RoomProps) => {
   return (
-    <RoomProvider id={roomId} 
-    initialPresence={{
-      cursor: null
-    }}
-    
+    <RoomProvider
+      id={roomId}
+      initialPresence={{
+        cursor: null,
+        selection: []
+      }}
+      initialStorage={{
+        layers: new LiveMap<string, LiveObject<Layer>>(),
+        layerIds: new LiveList([]),
+      }}
     >
       <ClientSideSuspense fallback={fallback}>
         <RoomErrorHandler>{children}</RoomErrorHandler>
