@@ -77,5 +77,10 @@ export const {
     useDeleteComment,
     useAddReaction,
     useRemoveReaction,
+    useHistory,
+    useCanRedo,
+    useCanUndo,
+    useRedo,
+    useUndo,
   },
 } = createRoomContext(client);
