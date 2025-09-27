@@ -21,9 +21,11 @@ import {
   useMutation,
   useStorage,
   useOthersMapped,
+  useSelf,
 } from "@/liveblocks.config";
 import { CursorsPresence } from "./cursors-presence";
 import {
+  colorToCss,
   connectionIdToColor,
   findIntersectingLayersWithRectangle,
   penPointsToPathLayer,
@@ -35,6 +37,7 @@ import { LiveObject } from "@liveblocks/client";
 import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
+import { Path } from "./path";
 
 const MAX_LAYERS = 100;
 
@@ -44,6 +47,8 @@ interface CanvasProps {
 
 const Canvas = ({ drawId }: CanvasProps) => {
   const layerIds = useStorage((root) => root.layerIds);
+
+  const pencilDraft = useSelf((me) => me.presence.pencilDraft);
 
   const [canvasState, setCanvasState] = useState<CanvasState>({
     mode: CanvasMode.None,
@@ -487,6 +492,21 @@ const Canvas = ({ drawId }: CanvasProps) => {
             )}
 
           <CursorsPresence />
+          
+          {pencilDraft != null && pencilDraft.length > 0 && (
+
+            <Path
+            points={pencilDraft}
+            fill={colorToCss(lastUsedColor)}
+            x={0}
+            y={0}
+            
+
+            />
+
+          )}
+
+
         </g>
       </svg>
     </main>
