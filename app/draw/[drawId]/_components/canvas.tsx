@@ -41,7 +41,7 @@ import { Path } from "./path";
 import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
-const MAX_LAYERS = 100;
+const MAX_LAYERS = Number.POSITIVE_INFINITY;
 
 interface CanvasProps {
   drawId: string;
