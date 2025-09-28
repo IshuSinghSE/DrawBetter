@@ -3,17 +3,38 @@
 </div>
 
 <div align="center">
-  <img src="https://img.shields.io/badge/Next.js-15.5.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js">
+  <img src="https://i| **Language**     | **Language**      | TypeScript    | 5.x     |
+| **Styling**       | Tailwind CSS  | 4.x     | TypeScript    | 5.x     |
+| **Styling**       | Tailwind CSS  | 4.x     |
+| **UI Components** | Radix UI      | Latest  |
+| **Animations**    | Framer Motion | 12.23.22|
+| **Icons**         | Lucide React  | 0.544.0 |
+
+### Backend & Database
+
+| Component            | Technology | Version |
+| -------------------- | ---------- | ------- |
+| **Database**         | Convex     | 1.27.3  |
+| **Authentication**   | Clerk      | 6.32.2  |
+| **State Management** | Zustand    | 5.0.8   |
+
+### Development Tools
+
+| Component      | Technology | Version |
+| -------------- | ---------- | ------- | ------------------------------------------------------------------------------------- |
+| **Linting**    | ESLint     | 9.x     |
+| **Build Tool** | Next.js    | 15.5.3  | Next.js-15.5.3-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js"> |
+
   <img src="https://img.shields.io/badge/React-19.1.0-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
   <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
   <img src="https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS">
   <img src="https://img.shields.io/badge/Convex-1.27.3-blue?style=for-the-badge&logo=data%3Aimage/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDMTMuMSAyIDE0IDIuOSAxNCA0VjIwQzE0IDIxLjEgMTMuMSAyMiAxMiAyMkg0QzIuOSAyMiAyIDIxLjEgMiAyMFYyQzIgMi45IDIuOSAyIDQgMkgxMkMxMy4xIDIgMTQgMi45IDE0IDRWMTJIMTJDMTAuOSAxMiAxMCAxMC45IDEwIDlWNFoiIGZpbGw9IiM2MzY2RjEiLz4KPC9zdmc+" alt="Convex">
   <img src="https://img.shields.io/badge/Liveblocks-3.7.1-red?style=for-the-badge" alt="Liveblocks">
   <img src="https://img.shields.io/badge/Clerk-6.32.2-orange?style=for-the-badge" alt="Clerk">
+  <img src="https://img.shields.io/badge/Hacktoberfest-2025-orange?style=for-the-badge&logo=hacktoberfest&logoColor=white" alt="Hacktoberfest 2025">
   <br>
   <img src="https://img.shields.io/badge/Version-0.1.0-blue?style=for-the-badge" alt="Version">
   <br>
-  <a href="https://draw-better.vercel.app/"><img src="https://img.shields.io/badge/Live%20Demo-Deployed-green?style=for-the-badge&logo=vercel" alt="Live Demo"></a>
 
 </div>
 
@@ -176,11 +197,10 @@ draw-better/
 
 | Component      | Technology | Version |
 | -------------- | ---------- | ------- |
-| **Linting**    | ESLint     | 9.0     |
+| **Linting**    | ESLint     | 9.x     |
 | **Build Tool** | Next.js    | 15.5.3  |
 
 </div>
-
 
 ### Performance Optimization
 
@@ -216,41 +236,30 @@ draw-better/
 
 ## 🤝 Contributing Guidelines
 
-### Contribution Process
+We welcome contributions from the community! Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to get started.
 
-1. **Issue Creation**: Submit detailed bug reports or feature requests
-2. **Code Review**: All PRs require review and approval
-3. **Documentation**: Update docs
-4. **Security Review**: Security implications assessed
+### Code of Conduct
+
+Please review our [Code of Conduct](CODE_OF_CONDUCT.md) to understand our community standards and expectations.
 
 ## 📄 License & Legal
 
 ### License Information
 
-This project is proprietary software owned by Arya Singh. All rights reserved.
+This project is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
 
 ## 🗺️ Roadmap & Vision
 
-### Q4 2025: Enhanced Collaboration
+### Future Enhancements
 
 - Advanced drawing tools (brushes, layers, effects)
 - Voice/video collaboration features
 - Advanced permission management
 - Mobile native applications
-
-### Q1 2026: AI Integration
-
 - AI-powered drawing assistance
 - Smart canvas analysis
-- Automated design suggestions
-- Content generation tools
-
-### Q2 2026: Enterprise Scale
-
 - Multi-region deployment
 - Advanced analytics dashboard
-- Custom integrations framework
-- Enterprise SSO support
 
 ## 📞 Support & Contact
 
@@ -264,5 +273,5 @@ This project is proprietary software owned by Arya Singh. All rights reserved.
 
 <div align="center">
   <p><strong>DrawBetter™</strong> - Where Creativity Meets Collaboration</p>
-  <p><em>© 2025 Arya Singh. All rights reserved.</em></p>
+  <p><em>Licensed under MIT</em></p>
 </div>
