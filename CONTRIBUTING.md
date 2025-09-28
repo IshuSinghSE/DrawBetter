@@ -2,6 +2,14 @@
 
 Thank you for your interest in contributing to DrawBetter! We welcome contributions from the community to help improve this collaborative drawing platform.
 
+## Table of Contents
+
+- [How to Contribute](#how-to-contribute)
+- [Development Guidelines](#development-guidelines)
+- [Reporting Issues](#reporting-issues)
+- [Code of Conduct](#code-of-conduct)
+- [License](#license)
+
 ## How to Contribute
 
 ### 1. Fork the Repository
@@ -74,5 +82,4 @@ Please review our [Code of Conduct](CODE_OF_CONDUCT.md) before contributing.
 
 ## License
 
-By contributing to DrawBetter, you agree that your contributions will be licensed under the [MIT License](LICENSE).</content>
-<parameter name="filePath">c:\Users\ARYA SINGH\Dropbox\PC\Desktop\drawbetter\draw-better\CONTRIBUTING.md
+By contributing to DrawBetter, you agree that your contributions will be licensed under the [MIT License](LICENSE).
