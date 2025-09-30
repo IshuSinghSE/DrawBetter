@@ -63,7 +63,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
     mode: CanvasMode.None,
   });
 
-  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
+  const [camera, setCamera] = useState<Camera>({ x: 0, y: 0, zoom: 1 });
   const cameraRef = useRef(camera);
   const panStartRef = useRef<{ x: number; y: number } | null>(null);
   const animationFrameRef = useRef<number | null>(null);
@@ -82,10 +82,19 @@ const Canvas = ({ drawId }: CanvasProps) => {
   });
 
   useEffect(() => {
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
+    const handleWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
       }
+    };
+
+    window.addEventListener("wheel", handleWheel, {
+      passive: false,
+      capture: true,
+    });
+
+    return () => {
+      window.removeEventListener("wheel", handleWheel, true);
     };
   }, []);
 
@@ -156,6 +165,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
       // Schedule camera update on next animation frame
       animationFrameRef.current = requestAnimationFrame(() => {
         setCamera((prevCamera) => ({
+          ...prevCamera,
           x: prevCamera.x + deltaX,
           y: prevCamera.y + deltaY,
         }));
@@ -348,12 +358,40 @@ const Canvas = ({ drawId }: CanvasProps) => {
     []
   );
 
-  const onWheel = useCallback((e: React.WheelEvent) => {
-    setCamera((camera) => ({
-      x: camera.x - e.deltaX,
-      y: camera.y - e.deltaY,
-    }));
-  }, []);
+  const onWheel = useCallback(
+    (e: React.WheelEvent) => {
+      if (e.ctrlKey) {
+        // Zoom functionality
+        e.preventDefault();
+        const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        const newZoom = Math.max(0.1, Math.min(5, camera.zoom * zoomFactor));
+
+        // Calculate zoom center point
+        const rect = (e.target as HTMLElement).getBoundingClientRect();
+        const centerX = e.clientX - rect.left;
+        const centerY = e.clientY - rect.top;
+
+        // Adjust camera position to zoom towards mouse cursor
+        const zoomChange = newZoom / camera.zoom;
+        const newX = centerX - (centerX - camera.x) * zoomChange;
+        const newY = centerY - (centerY - camera.y) * zoomChange;
+
+        setCamera({
+          x: newX,
+          y: newY,
+          zoom: newZoom,
+        });
+      } else {
+        // Pan functionality
+        setCamera((camera) => ({
+          ...camera,
+          x: camera.x - e.deltaX,
+          y: camera.y - e.deltaY,
+        }));
+      }
+    },
+    [camera]
+  );
 
   const onPointerMove = useMutation(
     ({ setMyPresence }, e: React.PointerEvent) => {
@@ -552,6 +590,34 @@ const Canvas = ({ drawId }: CanvasProps) => {
             break;
           }
         }
+        case "=":
+        case "+": {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setCamera((prevCamera) => ({
+              ...prevCamera,
+              zoom: Math.min(5, prevCamera.zoom * 1.2),
+            }));
+          }
+          break;
+        }
+        case "-": {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setCamera((prevCamera) => ({
+              ...prevCamera,
+              zoom: Math.max(0.1, prevCamera.zoom / 1.2),
+            }));
+          }
+          break;
+        }
+        case "0": {
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            setCamera({ x: 0, y: 0, zoom: 1 });
+          }
+          break;
+        }
       }
     }
 
@@ -599,7 +665,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
       >
         <g
           style={{
-            transform: `translate(${camera.x}px , ${camera.y}px)`,
+            transform: `translate(${camera.x}px , ${camera.y}px) scale(${camera.zoom})`,
           }}
         >
           {layerIds.map((layerId) => (
