@@ -564,7 +564,13 @@ const Canvas = ({ drawId }: CanvasProps) => {
   return (
     <main
       className={`h-full w-full relative bg-neutral-100 touch-none ${
-        canvasState.mode === CanvasMode.Panning ? "cursor-grab" : ""
+        canvasState.mode === CanvasMode.Panning
+          ? "cursor-grab"
+          : canvasState.mode === CanvasMode.Pencil
+            ? "cursor-pointer"
+            : canvasState.mode === CanvasMode.Inserting
+              ? "cursor-crosshair"
+              : ""
       }`}
     >
       <Info drawId={drawId} />
