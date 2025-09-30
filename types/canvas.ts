@@ -116,6 +116,10 @@ export type CanvasState =
     }
   | {
       mode: CanvasMode.Pencil;
+    }
+  | {
+      mode: CanvasMode.Panning;
+      current?: Point;
     };
 
 export enum CanvasMode {
@@ -126,7 +130,12 @@ export enum CanvasMode {
   Inserting,
   Resizing,
   Pencil,
+  Panning,
 }
 
-
-export type Layer = RectangleLayer | EllipseLayer | PathLayer | TextLayer | NoteLayer;
+export type Layer =
+  | RectangleLayer
+  | EllipseLayer
+  | PathLayer
+  | TextLayer
+  | NoteLayer;

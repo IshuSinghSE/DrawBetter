@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Info from "./info";
 import Participants from "./participants";
 import ToolBar from "./toolbar";
@@ -57,6 +63,14 @@ const Canvas = ({ drawId }: CanvasProps) => {
   });
 
   const [camera, setCamera] = useState<Camera>({ x: 0, y: 0 });
+  const cameraRef = useRef(camera);
+  const panStartRef = useRef<{ x: number; y: number } | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
+
+  // Keep cameraRef in sync with camera state
+  useEffect(() => {
+    cameraRef.current = camera;
+  }, [camera]);
 
   const [lastUsedColor, setLastUsedColor] = useState<Color>({
     r: 255,
@@ -64,7 +78,13 @@ const Canvas = ({ drawId }: CanvasProps) => {
     b: 255,
   });
 
-  useDisableScrollBounce();
+  useEffect(() => {
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
   const history = useHistory();
   const canUndo = useCanUndo();
@@ -114,6 +134,33 @@ const Canvas = ({ drawId }: CanvasProps) => {
       });
     },
     [lastUsedColor]
+  );
+
+  const panCamera = useCallback(
+    (clientX: number, clientY: number) => {
+      if (canvasState.mode !== CanvasMode.Panning || !panStartRef.current) {
+        return;
+      }
+
+      const deltaX = clientX - panStartRef.current.x;
+      const deltaY = clientY - panStartRef.current.y;
+
+      // Cancel any pending animation frame
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+
+      // Schedule camera update on next animation frame
+      animationFrameRef.current = requestAnimationFrame(() => {
+        setCamera((prevCamera) => ({
+          x: prevCamera.x + deltaX,
+          y: prevCamera.y + deltaY,
+        }));
+        panStartRef.current = { x: clientX, y: clientY };
+        animationFrameRef.current = null;
+      });
+    },
+    [canvasState.mode, setCamera]
   );
 
   const translateSelectedLayers = useMutation(
@@ -321,6 +368,13 @@ const Canvas = ({ drawId }: CanvasProps) => {
         resizeSelectedLayer(current);
       } else if (canvasState.mode === CanvasMode.Pencil) {
         continueDrawing(current, e);
+      } else if (canvasState.mode === CanvasMode.Panning) {
+        if (e.buttons === 1) {
+          // Only pan when left mouse button is pressed
+          panCamera(e.clientX, e.clientY);
+        }
+        // Don't update cursor position during panning to avoid feedback loop
+        return;
       }
 
       setMyPresence({ cursor: current });
@@ -333,6 +387,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
       camera,
       translateSelectedLayers,
       continueDrawing,
+      panCamera,
     ]
   );
 
@@ -353,6 +408,14 @@ const Canvas = ({ drawId }: CanvasProps) => {
       if (canvasState.mode === CanvasMode.Pencil) {
         startDrawing(point, e.pressure);
 
+        return;
+      }
+
+      if (canvasState.mode === CanvasMode.Panning) {
+        panStartRef.current = { x: e.clientX, y: e.clientY };
+        setCanvasState({
+          mode: CanvasMode.Panning,
+        });
         return;
       }
 
@@ -381,6 +444,16 @@ const Canvas = ({ drawId }: CanvasProps) => {
         insertPath();
       } else if (canvasState.mode === CanvasMode.Inserting) {
         insertLayer(canvasState.layerType, point);
+      } else if (canvasState.mode === CanvasMode.Panning) {
+        // Clean up pan state
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
+        panStartRef.current = null;
+        setCanvasState({
+          mode: CanvasMode.Panning,
+        });
       } else {
         setCanvasState({
           mode: CanvasMode.None,
@@ -406,7 +479,8 @@ const Canvas = ({ drawId }: CanvasProps) => {
     ({ self, setMyPresence }, e: React.PointerEvent, layerId: string) => {
       if (
         canvasState.mode === CanvasMode.Pencil ||
-        canvasState.mode === CanvasMode.Inserting
+        canvasState.mode === CanvasMode.Inserting ||
+        canvasState.mode === CanvasMode.Panning
       ) {
         return;
       }
@@ -471,7 +545,11 @@ const Canvas = ({ drawId }: CanvasProps) => {
   }, [deleteLayers, history]);
 
   return (
-    <main className="h-full w-full relative bg-neutral-100 touch-none">
+    <main
+      className={`h-full w-full relative bg-neutral-100 touch-none ${
+        canvasState.mode === CanvasMode.Panning ? "cursor-grab" : ""
+      }`}
+    >
       <Info drawId={drawId} />
       <Participants />
       <ToolBar
