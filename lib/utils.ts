@@ -127,8 +127,8 @@ export function penPointsToPathLayer(
   points: number[][],
   color: Color
 ): PathLayer {
-  if (points.length < 2) {
-    throw new Error("At least two points are required to create a path layer.");
+  if (points.length < 1) {
+    throw new Error("At least one point is required to create a path layer.");
   }
 
   let left = Number.POSITIVE_INFINITY;
@@ -143,12 +143,16 @@ export function penPointsToPathLayer(
     if (y > bottom) bottom = y;
   }
 
+  // Handle single point (dot) case
+  const width = points.length === 1 ? 1 : right - left;
+  const height = points.length === 1 ? 1 : bottom - top;
+
   return {
     type: LayerType.Path,
     x: left,
     y: top,
-    width: right - left,
-    height: bottom - top,
+    width,
+    height,
     fill: color,
     points: points.map(([x, y, pressure]) => [x - left, y - top, pressure]),
   };
