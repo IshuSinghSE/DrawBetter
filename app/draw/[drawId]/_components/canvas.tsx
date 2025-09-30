@@ -10,6 +10,7 @@ import React, {
 import Info from "./info";
 import Participants from "./participants";
 import ToolBar from "./toolbar";
+import ColorPalette from "./color-palette";
 import {
   Camera,
   CanvasMode,
@@ -576,6 +577,8 @@ const Canvas = ({ drawId }: CanvasProps) => {
         canUndo={canUndo}
         canRedo={canRedo}
       />
+
+      <ColorPalette onChange={setLastUsedColor} currentColor={lastUsedColor} />
 
       <SelectionTools camera={camera} setLastUsedColor={setLastUsedColor} />
 
