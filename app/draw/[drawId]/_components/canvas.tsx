@@ -66,6 +66,8 @@ const Canvas = ({ drawId }: CanvasProps) => {
   const cameraRef = useRef(camera);
   const panStartRef = useRef<{ x: number; y: number } | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const middleButtonPanRef = useRef(false);
+  const previousModeRef = useRef<CanvasState>({ mode: CanvasMode.None });
 
   // Keep cameraRef in sync with camera state
   useEffect(() => {
@@ -369,8 +371,8 @@ const Canvas = ({ drawId }: CanvasProps) => {
       } else if (canvasState.mode === CanvasMode.Pencil) {
         continueDrawing(current, e);
       } else if (canvasState.mode === CanvasMode.Panning) {
-        if (e.buttons === 1) {
-          // Only pan when left mouse button is pressed
+        if (e.buttons & (1 | 4)) {
+          // Left or middle mouse button
           panCamera(e.clientX, e.clientY);
         }
         // Don't update cursor position during panning to avoid feedback loop
@@ -400,6 +402,15 @@ const Canvas = ({ drawId }: CanvasProps) => {
   const onPointerDown = useCallback(
     (e: React.PointerEvent) => {
       const point = pointerEventToCanvasPoint(e, camera);
+
+      if (e.button === 1) {
+        // Middle mouse button
+        middleButtonPanRef.current = true;
+        previousModeRef.current = canvasState;
+        panStartRef.current = { x: e.clientX, y: e.clientY };
+        setCanvasState({ mode: CanvasMode.Panning });
+        return;
+      }
 
       if (canvasState.mode === CanvasMode.Inserting) {
         return;
@@ -451,9 +462,14 @@ const Canvas = ({ drawId }: CanvasProps) => {
           animationFrameRef.current = null;
         }
         panStartRef.current = null;
-        setCanvasState({
-          mode: CanvasMode.Panning,
-        });
+        if (middleButtonPanRef.current) {
+          middleButtonPanRef.current = false;
+          setCanvasState(previousModeRef.current);
+        } else {
+          setCanvasState({
+            mode: CanvasMode.Panning,
+          });
+        }
       } else {
         setCanvasState({
           mode: CanvasMode.None,
