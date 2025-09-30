@@ -586,6 +586,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
         onPointerLeave={onPointerLeave}
         onPointerUp={onPointerUp}
         onPointerDown={onPointerDown}
+        onContextMenu={(e) => e.preventDefault()}
       >
         <g
           style={{
