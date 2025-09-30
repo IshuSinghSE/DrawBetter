@@ -270,7 +270,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
 
       if (
         pencilDraft == null ||
-        pencilDraft.length < 2 ||
+        pencilDraft.length < 1 ||
         liveLayers.size >= MAX_LAYERS
       ) {
         setMyPresence({
