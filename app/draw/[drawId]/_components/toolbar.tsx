@@ -2,6 +2,7 @@ import React from "react";
 import { ToolButton } from "./tool-button";
 import {
   Circle,
+  Hand,
   MousePointer2,
   Pencil,
   Redo2,
@@ -47,6 +48,13 @@ const ToolBar = ({
             canvasState.mode === CanvasMode.Pressing ||
             canvasState.mode === CanvasMode.Resizing
           }
+        />
+
+        <ToolButton
+          label="Pan"
+          icon={Hand}
+          onClick={() => setCanvasState({ mode: CanvasMode.Panning })}
+          isActive={canvasState.mode === CanvasMode.Panning}
         />
 
         <ToolButton
