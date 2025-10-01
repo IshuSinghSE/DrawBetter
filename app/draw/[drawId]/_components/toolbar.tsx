@@ -1,6 +1,6 @@
 import React from "react";
 import { ToolButton } from "./tool-button";
-import { ExportButton } from "./export-button";
+import { ExportDropdown } from "./export-dropdown";
 import {
   Circle,
   Hand,
@@ -148,7 +148,7 @@ const ToolBar = ({
 
       {/* Export Section */}
       <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
-        <ExportButton drawTitle="drawing" />
+        <ExportDropdown drawTitle="drawing" />
       </div>
     </div>
   );

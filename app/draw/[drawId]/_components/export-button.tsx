@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { Hint } from "@/components/hint";
-import { exportCanvasSVG } from "@/lib/export-utils";
+import { exportCanvasSVG, exportCanvasPNG, exportCanvasJPG, exportCanvasPDF } from "@/lib/export-utils";
 
 interface ExportButtonProps {
   drawTitle?: string;
@@ -23,21 +23,28 @@ export const ExportButton = ({
 }: ExportButtonProps) => {
   const [isExporting, setIsExporting] = useState(false);
 
-  const handleExport = async () => {
+  const handleExport = async (format: 'svg' | 'png' | 'jpg' | 'pdf') => {
+    if (isExporting) return;
+    
     setIsExporting(true);
     try {
-      await exportCanvasSVG();
-      
-      console.log(`✅ SVG export successful: ${drawTitle}.svg`);
-    } catch (error) {
-      console.error("Export failed:", error);
-      
-      // Show user-friendly error message
-      const errorMessage = error instanceof Error ? error.message : "Export failed. Please try again.";
-      
-      if (typeof window !== 'undefined') {
-        alert(`Export failed: ${errorMessage}`);
+      switch (format) {
+        case 'svg':
+          await exportCanvasSVG();
+          break;
+        case 'png':
+          await exportCanvasPNG();
+          break;
+        case 'jpg':
+          await exportCanvasJPG();
+          break;
+        case 'pdf':
+          await exportCanvasPDF();
+          break;
       }
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setIsExporting(false);
     }
@@ -48,7 +55,7 @@ export const ExportButton = ({
       <Button
         variant={variant}
         size={size}
-        onClick={handleExport}
+        onClick={() => handleExport('svg')}
         disabled={isExporting}
         className={className}
       >

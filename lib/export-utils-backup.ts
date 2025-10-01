@@ -234,43 +234,40 @@ async function getCleanSVGString(): Promise<string> {
   return cleanSVGForExport(svgString);
 }
 
-// Convert SVG to different formats using direct canvas approach
+// Convert SVG to different formats using html2canvas
 async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pdf', quality: number = 0.95): Promise<void> {
-  console.log(`🔄 Converting SVG to ${format.toUpperCase()}...`);
-  
-  if (format === 'pdf') {
-    // Use specialized PDF conversion
-    await convertSVGToPDF(svgString);
-    return;
-  }
-  
-  // For PNG/JPG, use direct canvas approach for better reliability
-  return new Promise((resolve, reject) => {
-    const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
-    const img = new Image();
-    
-    img.onload = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      console.log(`🔄 Converting SVG to ${format.toUpperCase()}...`);
+      
+      if (format === 'pdf') {
+        // Use specialized PDF conversion
+        await convertSVGToPDF(svgString);
+        resolve();
+        return;
+      }
+      
+      // For PNG/JPG, use html2canvas for best results
+      const tempDiv = document.createElement('div');
+      tempDiv.style.position = 'absolute';
+      tempDiv.style.left = '-9999px';
+      tempDiv.style.top = '-9999px';
+      tempDiv.style.backgroundColor = format === 'jpg' ? '#ffffff' : 'transparent';
+      tempDiv.innerHTML = svgString;
+      
+      document.body.appendChild(tempDiv);
+      
       try {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+        const { default: html2canvas } = await import('html2canvas');
         
-        if (!ctx) {
-          reject(new Error('Could not get canvas context'));
-          return;
-        }
-        
-        // Set canvas dimensions
-        canvas.width = img.naturalWidth || img.width;
-        canvas.height = img.naturalHeight || img.height;
-        
-        // For JPG, fill with white background first
-        if (format === 'jpg') {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        
-        // Draw the image
-        ctx.drawImage(img, 0, 0);
+        const canvas = await html2canvas(tempDiv.firstElementChild as HTMLElement, {
+          allowTaint: true,
+          useCORS: true,
+          background: format === 'jpg' ? '#ffffff' : undefined,
+          width: tempDiv.scrollWidth,
+          height: tempDiv.scrollHeight,
+          logging: false
+        });
         
         // Convert canvas to blob and download
         canvas.toBlob((blob) => {
@@ -290,27 +287,80 @@ async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pd
           
           // Clean up
           URL.revokeObjectURL(url);
+          document.body.removeChild(tempDiv);
           resolve();
         }, format === 'jpg' ? 'image/jpeg' : 'image/png', quality);
         
-      } catch (error) {
-        console.error('Canvas conversion error:', error);
-        reject(error);
+      } catch (canvasError) {
+        console.error('html2canvas error:', canvasError);
+        document.body.removeChild(tempDiv);
+        
+        // Fallback to direct method
+        try {
+          await convertSVGDirectly(svgString, format as 'png' | 'jpg', quality);
+          resolve();
+        } catch (fallbackError) {
+          reject(fallbackError);
+        }
       }
-    };
-    
-    img.onerror = (error) => {
-      console.error('SVG image load error:', error);
-      reject(new Error('Failed to load SVG as image'));
-    };
-    
-    // Set CORS to handle cross-origin fonts
-    img.crossOrigin = 'anonymous';
-    img.src = svgDataUrl;
+    } catch (error) {
+      console.error('SVG conversion error:', error);
+      reject(error);
+    }
   });
 }
 
-// Export functions using the shared SVG generation
+// Fallback direct conversion method
+async function convertSVGDirectly(svgString: string, format: 'png' | 'jpg', quality: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
+    const img = new Image();
+    
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) {
+        reject(new Error('Could not get canvas context'));
+        return;
+      }
+      
+      canvas.width = img.naturalWidth || img.width;
+      canvas.height = img.naturalHeight || img.height;
+      
+      if (format === 'jpg') {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
+      ctx.drawImage(img, 0, 0);
+      
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          reject(new Error('Failed to convert canvas to blob'));
+          return;
+        }
+        
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `canvas-export-${Date.now()}.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        URL.revokeObjectURL(url);
+        resolve();
+      }, format === 'jpg' ? 'image/jpeg' : 'image/png', quality);
+    };
+    
+    img.onerror = () => {
+      reject(new Error('Failed to load SVG as image'));
+    };
+    
+    img.src = svgDataUrl;
+  });
+}
 
 // Improved PDF conversion using html2canvas and jsPDF
 async function convertSVGToPDF(svgString: string): Promise<void> {
@@ -323,89 +373,72 @@ async function convertSVGToPDF(svgString: string): Promise<void> {
       import('html2canvas')
     ]);
     
-    // First, try to convert SVG to image using canvas
-    const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
+    // Create a temporary div to hold the SVG
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '-9999px';
+    tempDiv.style.width = 'auto';
+    tempDiv.style.height = 'auto';
+    tempDiv.style.backgroundColor = '#ffffff';
+    tempDiv.innerHTML = svgString;
     
-    return new Promise((resolve, reject) => {
-      const img = new Image();
+    document.body.appendChild(tempDiv);
+    
+    try {
+      // Use html2canvas to convert the SVG to canvas
+      const canvas = await html2canvas(tempDiv.firstElementChild as HTMLElement, {
+        background: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        width: tempDiv.scrollWidth,
+        height: tempDiv.scrollHeight
+      });
       
-      img.onload = async () => {
-        try {
-          // Create a temporary canvas to draw the image
-          const tempCanvas = document.createElement('canvas');
-          const ctx = tempCanvas.getContext('2d');
-          
-          if (!ctx) {
-            reject(new Error('Could not get canvas context'));
-            return;
-          }
-          
-          // Set canvas dimensions
-          tempCanvas.width = img.naturalWidth || img.width;
-          tempCanvas.height = img.naturalHeight || img.height;
-          
-          // Fill with white background for PDF
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
-          
-          // Draw the SVG image
-          ctx.drawImage(img, 0, 0);
-          
-          // Get canvas dimensions for PDF calculation
-          const imgWidth = tempCanvas.width;
-          const imgHeight = tempCanvas.height;
-          
-          // Calculate PDF page size based on canvas aspect ratio
-          const aspectRatio = imgWidth / imgHeight;
-          const a4Width = 210; // A4 width in mm
-          const a4Height = 297; // A4 height in mm
-          
-          let pdfWidth, pdfHeight;
-          
-          if (aspectRatio > a4Width / a4Height) {
-            // Wide canvas - fit to width
-            pdfWidth = a4Width;
-            pdfHeight = a4Width / aspectRatio;
-          } else {
-            // Tall canvas - fit to height
-            pdfHeight = a4Height;
-            pdfWidth = a4Height * aspectRatio;
-          }
-          
-          // Create PDF with calculated dimensions
-          const pdf = new jsPDF({
-            orientation: aspectRatio > 1 ? 'landscape' : 'portrait',
-            unit: 'mm',
-            format: [pdfWidth, pdfHeight]
-          });
-          
-          // Convert canvas to data URL
-          const imgData = tempCanvas.toDataURL('image/png', 1.0);
-          
-          // Add image to PDF (positioned at 0,0 and scaled to fit)
-          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-          
-          // Download the PDF
-          pdf.save(`canvas-export-${Date.now()}.pdf`);
-          
-          console.log('✅ PDF conversion successful');
-          resolve();
-          
-        } catch (error) {
-          console.error('PDF canvas conversion failed:', error);
-          reject(error);
-        }
-      };
+      // Get canvas dimensions
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
       
-      img.onerror = (error) => {
-        console.error('SVG image load failed:', error);
-        reject(new Error('Failed to load SVG as image for PDF conversion'));
-      };
+      // Calculate PDF page size based on canvas aspect ratio
+      const aspectRatio = imgWidth / imgHeight;
+      const a4Width = 210; // A4 width in mm
+      const a4Height = 297; // A4 height in mm
       
-      // Set CORS to handle cross-origin fonts
-      img.crossOrigin = 'anonymous';
-      img.src = svgDataUrl;
-    });
+      let pdfWidth, pdfHeight;
+      
+      if (aspectRatio > a4Width / a4Height) {
+        // Wide canvas - fit to width
+        pdfWidth = a4Width;
+        pdfHeight = a4Width / aspectRatio;
+      } else {
+        // Tall canvas - fit to height
+        pdfHeight = a4Height;
+        pdfWidth = a4Height * aspectRatio;
+      }
+      
+      // Create PDF with calculated dimensions
+      const pdf = new jsPDF({
+        orientation: aspectRatio > 1 ? 'landscape' : 'portrait',
+        unit: 'mm',
+        format: [pdfWidth, pdfHeight]
+      });
+      
+      // Convert canvas to data URL
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      
+      // Add image to PDF (positioned at 0,0 and scaled to fit)
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      
+      // Download the PDF
+      pdf.save(`canvas-export-${Date.now()}.pdf`);
+      
+      console.log('✅ PDF conversion successful');
+      
+    } finally {
+      // Clean up
+      document.body.removeChild(tempDiv);
+    }
     
   } catch (error) {
     console.error('PDF conversion failed:', error);
