@@ -13,6 +13,7 @@ import { Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { ExportButton } from "./export-button";
 
 interface InfoProps {
   drawId: string;
@@ -62,6 +63,11 @@ const Info = ({ drawId }: InfoProps) => {
           {data.title}
         </Button>
       </Hint>
+
+      <TabSeparator />
+      
+      {/* Export Button */}
+      <ExportButton drawTitle={data.title} />
 
       <TabSeparator />
       <Actions
