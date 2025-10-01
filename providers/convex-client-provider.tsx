@@ -13,19 +13,39 @@ const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL!;
 
 const convex = new ConvexReactClient(convexUrl);
 
+const ConvexWrapper = ({ children }: { children: React.ReactNode }) => {
+  const auth = useAuth();
+
+  const customAuth = {
+    ...auth,
+    getToken: async (options?: { template?: "convex"; skipCache?: boolean }) => {
+      return await auth.getToken({ 
+        template: "convex",
+        ...options 
+      });
+    },
+  };
+
+  return (
+    <ConvexProviderWithClerk client={convex} useAuth={() => customAuth}>
+      <Authenticated>
+        {children}
+      </Authenticated>
+      <AuthLoading>
+        <Loading />
+      </AuthLoading>
+    </ConvexProviderWithClerk>
+  );
+};
+
 export const ConvexClientProvider = ({
   children,
 }: ConvexClientProviderProps) => {
   return (
     <ClerkProvider>
-      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-       <Authenticated>
-         {children}
-       </Authenticated>
-        <AuthLoading>
-          <Loading />
-        </AuthLoading>
-      </ConvexProviderWithClerk> 
+      <ConvexWrapper>
+        {children}
+      </ConvexWrapper>
     </ClerkProvider>
   );
 };

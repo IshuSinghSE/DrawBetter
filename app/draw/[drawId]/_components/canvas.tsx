@@ -45,7 +45,6 @@ import { LayerPreview } from "./layer-preview";
 import { SelectionBox } from "./selection-box";
 import { SelectionTools } from "./selection-tools";
 import { Path } from "./path";
-import { useDisableScrollBounce } from "@/hooks/use-disable-scroll-bounce";
 import { useDeleteLayers } from "@/hooks/use-delete-layers";
 
 const MAX_LAYERS = Number.POSITIVE_INFINITY;
@@ -355,7 +354,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
         corner,
       });
     },
-    []
+    [history]
   );
 
   const onWheel = useCallback(
@@ -474,7 +473,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
         mode: CanvasMode.Pressing,
       });
     },
-    [camera, canvasState.mode, setCanvasState, startDrawing]
+    [camera, setCanvasState, startDrawing, canvasState]
   );
 
   const onPointerUp = useMutation(

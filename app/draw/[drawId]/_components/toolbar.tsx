@@ -1,5 +1,6 @@
 import React from "react";
 import { ToolButton } from "./tool-button";
+import { ExportDialog } from "./export-dialog";
 import {
   Circle,
   Hand,
@@ -20,6 +21,7 @@ interface ToolBarProps {
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  drawTitle?: string;
 }
 
 const ToolBar = ({
@@ -29,6 +31,7 @@ const ToolBar = ({
   redo,
   canUndo,
   canRedo,
+  drawTitle = "drawing",
 }: ToolBarProps) => {
   return (
     <div
@@ -143,6 +146,11 @@ const ToolBar = ({
           onClick={redo}
           isDisabled={!canRedo}
         />
+      </div>
+
+      {/* Export Section */}
+      <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
+        <ExportDialog drawTitle={drawTitle} />
       </div>
     </div>
   );

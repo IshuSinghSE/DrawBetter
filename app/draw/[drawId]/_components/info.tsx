@@ -13,6 +13,7 @@ import { Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { ExportDialog } from "./export-dialog";
 
 interface InfoProps {
   drawId: string;
@@ -72,6 +73,15 @@ const Info = ({ drawId }: InfoProps) => {
           {data.title}
         </Button>
       </Hint>
+
+      <TabSeparator />
+      
+      <ExportDialog 
+        drawTitle={data.title} 
+        variant="outline" 
+        showLabel={true}
+        size="sm"
+      />
 
       <TabSeparator />
       <Actions id={data._id} title={data.title} side="bottom" sideOffset={10}>
