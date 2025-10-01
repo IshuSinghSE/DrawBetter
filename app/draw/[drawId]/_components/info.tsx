@@ -84,12 +84,6 @@ const Info = ({ drawId }: InfoProps) => {
       />
 
       <TabSeparator />
-      <Actions
-      id={data._id}
-      title={data.title}
-      side="bottom"
-      sideOffset={10}
-      >
       <Actions id={data._id} title={data.title} side="bottom" sideOffset={10}>
         <div>
           <Hint label="Main Menu" side="bottom" sideOffset={10}>
