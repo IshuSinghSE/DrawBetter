@@ -39,13 +39,23 @@ const Info = ({ drawId }: InfoProps) => {
   }
 
   return (
-    <div className="absolute top-2 left-2 bg-white rounded-md px-1.5 flex items-center shadow-md h-12">
+    <div className="absolute top-2 left-2 glass rounded-xl px-2 flex items-center shadow-medium h-14 hover:shadow-strong transition-all duration-300">
       <Hint label="Go to Draws" side="bottom" sideOffset={10}>
         <Button className="px-2 bg-transparent" variant={"draw"}>
           <Link href="/" className="flex items-center gap-2">
-            <Image src="/onlylogo.svg" alt="Draw Logo" width={40} height={40} />
+            <div className="p-1.5 rounded-lg shadow-sm">
+              <Image
+                src="/onlylogo.svg"
+                alt="Draw Logo"
+                width={28}
+                height={28}
+              />
+            </div>
             <span
-              className={cn("font-semibold text-xl text-black", font.className)}
+              className={cn(
+                "font-bold text-xl bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent",
+                font.className
+              )}
             >
               Draw Better
             </span>
@@ -56,7 +66,7 @@ const Info = ({ drawId }: InfoProps) => {
       <Hint label="Edit Title" side="bottom" sideOffset={10}>
         <Button
           onClick={() => onOpen(data._id, data.title)}
-          className="text-base font-normal px-2"
+          className="text-base font-semibold px-3 hover:bg-blue-50"
           variant={"draw"}
         >
           {data.title}
@@ -64,31 +74,14 @@ const Info = ({ drawId }: InfoProps) => {
       </Hint>
 
       <TabSeparator />
-      <Actions
-      id={data._id}
-      title={data.title}
-      side="bottom"
-      sideOffset={10}
-      >
+      <Actions id={data._id} title={data.title} side="bottom" sideOffset={10}>
         <div>
-          <Hint
-          label="Main Menu"
-          side="bottom"
-          sideOffset={10}
-          >
-           <Button
-           size={"icon"}
-           variant={"draw"}
-           >
-             <Menu 
-            
-            />
-           </Button>
-
+          <Hint label="Main Menu" side="bottom" sideOffset={10}>
+            <Button size={"icon"} variant={"draw"} className="hover:bg-blue-50">
+              <Menu />
+            </Button>
           </Hint>
         </div>
-
-
       </Actions>
     </div>
   );
