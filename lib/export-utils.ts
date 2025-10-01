@@ -1,10 +1,18 @@
 export type ExportFormat = "svg" | "png" | "jpg" | "pdf";
 export type ExportQuality = "low" | "medium" | "high" | "ultra";
+export type ExportTheme = "light" | "dark" | "transparent";
 
-interface ExportOptions {
-  format: ExportFormat;
-  quality: ExportQuality;
-  filename?: string;
+// Helper function to sanitize filename for downloads
+function sanitizeFilename(filename: string): string {
+  // Remove or replace unsafe characters and trim whitespace
+  return filename
+    .trim()
+    .replace(/[<>:"/\\|?*]/g, '-') // Replace unsafe characters with dash
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+    .replace(/-{2,}/g, '-') // Replace multiple dashes with single
+    .slice(0, 100) // Limit length to 100 characters
+    || 'drawing'; // Fallback if filename becomes empty
 }
 
 // Convert OKLCH colors to RGB for better compatibility
@@ -65,7 +73,7 @@ function cleanSVGForExport(svgString: string): string {
  */
 
 // Get clean SVG string for export (reused by all export functions)
-async function getCleanSVGString(): Promise<string> {
+async function getCleanSVGString(theme: ExportTheme = 'light'): Promise<string> {
   // Find the main canvas SVG element
   const canvasSVG = document.querySelector('svg.h-\\[100vh\\]') as SVGElement;
   if (!canvasSVG) {
@@ -185,14 +193,16 @@ async function getCleanSVGString(): Promise<string> {
   defs.appendChild(style);
   exportSVG.appendChild(defs);
 
-  // Add white background
-  const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  background.setAttribute('x', viewBoxX.toString());
-  background.setAttribute('y', viewBoxY.toString());
-  background.setAttribute('width', exportWidth.toString());
-  background.setAttribute('height', exportHeight.toString());
-  background.setAttribute('fill', 'white');
-  exportSVG.appendChild(background);
+  // Add background based on theme
+  if (theme !== 'transparent') {
+    const background = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    background.setAttribute('x', viewBoxX.toString());
+    background.setAttribute('y', viewBoxY.toString());
+    background.setAttribute('width', exportWidth.toString());
+    background.setAttribute('height', exportHeight.toString());
+    background.setAttribute('fill', theme === 'light' ? 'white' : '#1a1a1a');
+    exportSVG.appendChild(background);
+  }
 
   // Create a group with scaling transformation
   const scaledGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -235,12 +245,12 @@ async function getCleanSVGString(): Promise<string> {
 }
 
 // Convert SVG to different formats using direct canvas approach
-async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pdf', quality: number = 0.95): Promise<void> {
-  console.log(`🔄 Converting SVG to ${format.toUpperCase()}...`);
+async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pdf', quality: number = 0.95, theme: ExportTheme = 'light', filename: string = 'drawing'): Promise<void> {
+  console.log(`🔄 Converting SVG to ${format.toUpperCase()} with quality: ${quality}...`);
   
   if (format === 'pdf') {
-    // Use specialized PDF conversion
-    await convertSVGToPDF(svgString);
+    // Use specialized PDF conversion with quality
+    await convertSVGToPDF(svgString, theme, quality, filename);
     return;
   }
   
@@ -259,14 +269,34 @@ async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pd
           return;
         }
         
-        // Set canvas dimensions
-        canvas.width = img.naturalWidth || img.width;
-        canvas.height = img.naturalHeight || img.height;
+        // Calculate scale factor based on quality for PNG (for resolution improvement)
+        // Low: 1x, Medium: 1.5x, High: 2x, Ultra: 3x resolution
+        const getScaleFactor = (format: string, quality: number): number => {
+          if (format !== 'png') return 1; // Only scale PNG for resolution
+          
+          if (quality <= 0.6) return 1;      // Low: 1x
+          if (quality <= 0.8) return 1.5;   // Medium: 1.5x  
+          if (quality <= 0.95) return 2;    // High: 2x
+          return 3;                          // Ultra: 3x
+        };
         
-        // For JPG, fill with white background first
-        if (format === 'jpg') {
-          ctx.fillStyle = '#ffffff';
+        const scaleFactor = getScaleFactor(format, quality);
+        
+        // Set canvas dimensions with quality scaling for PNG
+        const baseWidth = img.naturalWidth || img.width;
+        const baseHeight = img.naturalHeight || img.height;
+        canvas.width = Math.floor(baseWidth * scaleFactor);
+        canvas.height = Math.floor(baseHeight * scaleFactor);
+        
+        // For JPG or light theme, fill with background color first
+        if (format === 'jpg' || (theme === 'light' && format !== 'png')) {
+          ctx.fillStyle = theme === 'light' ? '#ffffff' : '#1a1a1a';
           ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // Scale the context for high-quality rendering
+        if (scaleFactor !== 1) {
+          ctx.scale(scaleFactor, scaleFactor);
         }
         
         // Draw the image
@@ -283,7 +313,7 @@ async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pd
           const url = URL.createObjectURL(blob);
           const link = document.createElement('a');
           link.href = url;
-          link.download = `canvas-export-${Date.now()}.${format}`;
+          link.download = `${sanitizeFilename(filename)}.${format}`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -312,16 +342,13 @@ async function convertSVGToFormat(svgString: string, format: 'png' | 'jpg' | 'pd
 
 // Export functions using the shared SVG generation
 
-// Improved PDF conversion using html2canvas and jsPDF
-async function convertSVGToPDF(svgString: string): Promise<void> {
+// Improved PDF conversion using jsPDF and direct canvas approach
+async function convertSVGToPDF(svgString: string, theme: ExportTheme = 'light', quality: number = 0.95, filename: string = 'drawing'): Promise<void> {
   try {
     console.log('🔄 Starting PDF conversion...');
     
-    // Dynamic imports to avoid SSR issues
-    const [{ jsPDF }, { default: html2canvas }] = await Promise.all([
-      import('jspdf'),
-      import('html2canvas')
-    ]);
+    // Dynamic import to avoid SSR issues
+    const { jsPDF } = await import('jspdf');
     
     // First, try to convert SVG to image using canvas
     const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
@@ -340,20 +367,36 @@ async function convertSVGToPDF(svgString: string): Promise<void> {
             return;
           }
           
-          // Set canvas dimensions
-          tempCanvas.width = img.naturalWidth || img.width;
-          tempCanvas.height = img.naturalHeight || img.height;
+          // Calculate scale factor based on quality for better resolution
+          // Low: 1x, Medium: 1.5x, High: 2x, Ultra: 2.5x resolution for PDF
+          const getScaleFactor = (quality: number): number => {
+            if (quality <= 0.6) return 1;      // Low: 1x
+            if (quality <= 0.8) return 1.5;   // Medium: 1.5x  
+            if (quality <= 0.95) return 2;    // High: 2x
+            return 2.5;                        // Ultra: 2.5x (reasonable for PDF)
+          };
           
-          // Fill with white background for PDF
-          ctx.fillStyle = '#ffffff';
+          const scaleFactor = getScaleFactor(quality);
+          
+          // Set canvas dimensions with quality scaling
+          const baseWidth = img.naturalWidth || img.width;
+          const baseHeight = img.naturalHeight || img.height;
+          tempCanvas.width = Math.floor(baseWidth * scaleFactor);
+          tempCanvas.height = Math.floor(baseHeight * scaleFactor);
+          
+          // Fill with background color for PDF based on theme
+          ctx.fillStyle = theme === 'light' ? '#ffffff' : '#1a1a1a';
           ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+          
+          // Scale the context for high-quality rendering
+          ctx.scale(scaleFactor, scaleFactor);
           
           // Draw the SVG image
           ctx.drawImage(img, 0, 0);
           
-          // Get canvas dimensions for PDF calculation
-          const imgWidth = tempCanvas.width;
-          const imgHeight = tempCanvas.height;
+          // Get canvas dimensions for PDF calculation (use original dimensions for layout)
+          const imgWidth = baseWidth;
+          const imgHeight = baseHeight;
           
           // Calculate PDF page size based on canvas aspect ratio
           const aspectRatio = imgWidth / imgHeight;
@@ -379,14 +422,14 @@ async function convertSVGToPDF(svgString: string): Promise<void> {
             format: [pdfWidth, pdfHeight]
           });
           
-          // Convert canvas to data URL
-          const imgData = tempCanvas.toDataURL('image/png', 1.0);
+          // Convert canvas to data URL with quality setting
+          const imgData = tempCanvas.toDataURL('image/png', quality);
           
           // Add image to PDF (positioned at 0,0 and scaled to fit)
           pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
           
           // Download the PDF
-          pdf.save(`canvas-export-${Date.now()}.pdf`);
+          pdf.save(`${sanitizeFilename(filename)}.pdf`);
           
           console.log('✅ PDF conversion successful');
           resolve();
@@ -416,12 +459,12 @@ async function convertSVGToPDF(svgString: string): Promise<void> {
 // Export functions using the shared SVG generation
 
 // SVG Export - uses the shared SVG generation
-export async function exportCanvasSVG(): Promise<void> {
+export async function exportCanvasSVG(theme: ExportTheme = 'light', filename: string = 'drawing'): Promise<void> {
   try {
     console.log('🎯 Starting SVG export...');
     
     // Get the clean SVG string
-    const cleanedSvgString = await getCleanSVGString();
+    const cleanedSvgString = await getCleanSVGString(theme);
     
     // Create blob and download
     const blob = new Blob([cleanedSvgString], { type: 'image/svg+xml' });
@@ -430,7 +473,7 @@ export async function exportCanvasSVG(): Promise<void> {
     // Create download link
     const link = document.createElement('a');
     link.href = url;
-    link.download = `canvas-export-${Date.now()}.svg`;
+    link.download = `${sanitizeFilename(filename)}.svg`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -446,15 +489,18 @@ export async function exportCanvasSVG(): Promise<void> {
 }
 
 // PNG Export - uses the shared SVG as source
-export async function exportCanvasPNG(): Promise<void> {
+export async function exportCanvasPNG(quality: ExportQuality = 'high', theme: ExportTheme = 'light', filename: string = 'drawing'): Promise<void> {
   try {
     console.log('🎯 Starting PNG export...');
     
     // Get the clean SVG string
-    const svgString = await getCleanSVGString();
+    const svgString = await getCleanSVGString(theme);
+    
+    // Convert quality to number
+    const qualityValue = getQualityValue(quality);
     
     // Convert SVG to PNG
-    await convertSVGToFormat(svgString, 'png');
+    await convertSVGToFormat(svgString, 'png', qualityValue, theme, filename);
     
     console.log('✅ PNG export successful');
   } catch (error) {
@@ -464,15 +510,18 @@ export async function exportCanvasPNG(): Promise<void> {
 }
 
 // JPG Export - uses the shared SVG as source
-export async function exportCanvasJPG(): Promise<void> {
+export async function exportCanvasJPG(quality: ExportQuality = 'high', theme: ExportTheme = 'light', filename: string = 'drawing'): Promise<void> {
   try {
     console.log('🎯 Starting JPG export...');
     
     // Get the clean SVG string
-    const svgString = await getCleanSVGString();
+    const svgString = await getCleanSVGString(theme);
+    
+    // Convert quality to number
+    const qualityValue = getQualityValue(quality);
     
     // Convert SVG to JPG
-    await convertSVGToFormat(svgString, 'jpg');
+    await convertSVGToFormat(svgString, 'jpg', qualityValue, theme, filename);
     
     console.log('✅ JPG export successful');
   } catch (error) {
@@ -482,19 +531,33 @@ export async function exportCanvasJPG(): Promise<void> {
 }
 
 // PDF Export - uses the shared SVG as source
-export async function exportCanvasPDF(): Promise<void> {
+export async function exportCanvasPDF(quality: ExportQuality = 'high', theme: ExportTheme = 'light', filename: string = 'drawing'): Promise<void> {
   try {
     console.log('🎯 Starting PDF export...');
     
     // Get the clean SVG string
-    const svgString = await getCleanSVGString();
+    const svgString = await getCleanSVGString(theme);
     
-    // Convert SVG to PDF
-    await convertSVGToFormat(svgString, 'pdf');
+    // Convert quality to number
+    const qualityValue = getQualityValue(quality);
+    
+    // Convert SVG to PDF with quality
+    await convertSVGToFormat(svgString, 'pdf', qualityValue, theme, filename);
     
     console.log('✅ PDF export successful');
   } catch (error) {
     console.error('❌ PDF export failed:', error);
     throw error;
+  }
+}
+
+// Helper function to convert quality enum to number
+function getQualityValue(quality: ExportQuality): number {
+  switch (quality) {
+    case 'low': return 0.6;
+    case 'medium': return 0.8;
+    case 'high': return 0.95;
+    case 'ultra': return 1.0;
+    default: return 0.95;
   }
 }

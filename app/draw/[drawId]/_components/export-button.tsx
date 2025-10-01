@@ -30,16 +30,16 @@ export const ExportButton = ({
     try {
       switch (format) {
         case 'svg':
-          await exportCanvasSVG();
+          await exportCanvasSVG('light', drawTitle);
           break;
         case 'png':
-          await exportCanvasPNG();
+          await exportCanvasPNG('high', 'light', drawTitle);
           break;
         case 'jpg':
-          await exportCanvasJPG();
+          await exportCanvasJPG('high', 'light', drawTitle);
           break;
         case 'pdf':
-          await exportCanvasPDF();
+          await exportCanvasPDF('high', 'light', drawTitle);
           break;
       }
     } catch (error) {

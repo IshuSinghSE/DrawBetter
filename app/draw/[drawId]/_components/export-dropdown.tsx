@@ -95,7 +95,7 @@ export const ExportDropdown = ({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40" side="bottom" sideOffset={5}>
         <DropdownMenuItem 
-          onClick={(e) => {
+          onClick={() => {
             console.log('📄 SVG export clicked');
             handleExport('svg');
           }}
@@ -106,7 +106,7 @@ export const ExportDropdown = ({
           Export as SVG
         </DropdownMenuItem>
         <DropdownMenuItem 
-          onClick={(e) => {
+          onClick={() => {
             console.log('🖼️ PNG export clicked');
             handleExport('png');
           }}
@@ -117,7 +117,7 @@ export const ExportDropdown = ({
           Export as PNG
         </DropdownMenuItem>
         <DropdownMenuItem 
-          onClick={(e) => {
+          onClick={() => {
             console.log('📸 JPG export clicked');
             handleExport('jpg');
           }}
@@ -128,7 +128,7 @@ export const ExportDropdown = ({
           Export as JPG
         </DropdownMenuItem>
         <DropdownMenuItem 
-          onClick={(e) => {
+          onClick={() => {
             console.log('📋 PDF export clicked');
             handleExport('pdf');
           }}

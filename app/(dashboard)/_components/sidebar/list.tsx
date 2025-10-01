@@ -14,7 +14,7 @@ export const List = () => {
     if (organization && userMemberships.revalidate) {
       userMemberships.revalidate();
     }
-  }, [organization?.id]);
+  }, [organization?.id, organization, userMemberships]);
 
   if (!userMemberships.data?.length) return null;
 
