@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { OrganizationSwitcher } from "@clerk/nextjs";
+import { OrganizationSwitcher, UserButton, useOrganization } from "@clerk/nextjs";
 import { LayoutDashboard, Star } from "lucide-react";
 import { Poppins } from "next/font/google";
 import Image from "next/image";
@@ -18,6 +18,7 @@ const font = Poppins({
 const OrgSidebar = () => {
   const searchParams = useSearchParams();
   const favorites = searchParams.get("favorites");
+  const { isLoaded } = useOrganization();
 
   return (
     <div className="hidden lg:flex flex-col space-y-6 w-[206px] pl-5 pt-5">
@@ -31,27 +32,43 @@ const OrgSidebar = () => {
         </div>
       </Link>
 
-      <OrganizationSwitcher
-        hidePersonal
-        appearance={{
-          elements: {
-            rootBox: {
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%",
-            },
-            organizationSwitcherTrigger: {
-              padding: "6px",
-              width: "100%",
-              borderRadius: "8px",
-              border: "1px solid #E5E7EB",
-              justifyContent: "space-between",
-              backgroundColor: "white",
-            },
-          },
-        }}
-      />
+      {/* Conditional rendering: OrganizationSwitcher if organizations are enabled, UserButton otherwise */}
+      <div className="flex justify-center">
+        {isLoaded ? (
+          <OrganizationSwitcher
+            hidePersonal
+            appearance={{
+              elements: {
+                rootBox: {
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: "100%",
+                },
+                organizationSwitcherTrigger: {
+                  padding: "6px",
+                  width: "100%",
+                  borderRadius: "8px",
+                  border: "1px solid #E5E7EB",
+                  justifyContent: "space-between",
+                  backgroundColor: "white",
+                },
+              },
+            }}
+          />
+        ) : (
+          <UserButton
+            appearance={{
+              elements: {
+                userButtonAvatarBox: {
+                  width: "40px",
+                  height: "40px",
+                },
+              },
+            }}
+          />
+        )}
+      </div>
       <div className="space-y-1 w-full opeaci">
         <Button
           variant={favorites ? "ghost" : "secondary"}
