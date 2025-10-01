@@ -36,12 +36,12 @@ const ToolBar = ({
   return (
     <div
       className="absolute top-[50%]
-    -translate-y-[50%] left-2 flex flex-col gap-y-4
+    -translate-y-[50%] left-2 flex flex-col gap-y-4 animate-slide-in
     "
     >
-      <div className="bg-white rounded-md p-1.5 flex flex-col gap-y-1 items-center shadow-md">
+      <div className="glass rounded-xl p-2 flex flex-col gap-y-1.5 items-center shadow-medium hover:shadow-strong transition-all duration-300">
         <ToolButton
-          label="Select"
+          label="Select (V)"
           icon={MousePointer2}
           onClick={() => setCanvasState({ mode: CanvasMode.None })}
           isActive={
@@ -54,14 +54,14 @@ const ToolBar = ({
         />
 
         <ToolButton
-          label="Pan"
+          label="Pan (H)"
           icon={Hand}
           onClick={() => setCanvasState({ mode: CanvasMode.Panning })}
           isActive={canvasState.mode === CanvasMode.Panning}
         />
 
         <ToolButton
-          label="Text"
+          label="Text (T)"
           icon={Type}
           onClick={() =>
             setCanvasState({
@@ -76,7 +76,7 @@ const ToolBar = ({
         />
 
         <ToolButton
-          label="Sticky Note"
+          label="Sticky Note (N)"
           icon={StickyNote}
           onClick={() =>
             setCanvasState({
@@ -91,7 +91,7 @@ const ToolBar = ({
         />
 
         <ToolButton
-          label="Rectangle"
+          label="Rectangle (R)"
           icon={Square}
           onClick={() =>
             setCanvasState({
@@ -106,7 +106,7 @@ const ToolBar = ({
         />
 
         <ToolButton
-          label="Ellipse"
+          label="Ellipse (O)"
           icon={Circle}
           onClick={() =>
             setCanvasState({
@@ -121,7 +121,7 @@ const ToolBar = ({
         />
 
         <ToolButton
-          label="Pen"
+          label="Pen (P)"
           icon={Pencil}
           onClick={() =>
             setCanvasState({
@@ -132,16 +132,16 @@ const ToolBar = ({
         />
       </div>
 
-      <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
+      <div className="glass rounded-xl p-2 flex flex-col items-center shadow-medium hover:shadow-strong transition-all duration-300">
         <ToolButton
-          label="Undo"
+          label="Undo (Ctrl+Z)"
           icon={Undo2}
           onClick={undo}
           isDisabled={!canUndo}
         />
 
         <ToolButton
-          label="Redo"
+          label="Redo (Ctrl+Shift+Z)"
           icon={Redo2}
           onClick={redo}
           isDisabled={!canRedo}
@@ -163,11 +163,11 @@ export const ToolBarSkeleton = () => {
     <div
       className="absolute top-[50%]
     -translate-y-[50%] left-2 flex flex-col gap-y-4
-    bg-white 
+    glass
     h-[360px]
     w-[52px]
-    shadow-md
-    rounded-md
+    shadow-medium
+    rounded-xl
     "
     />
   );

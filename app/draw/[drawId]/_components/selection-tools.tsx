@@ -90,7 +90,7 @@ export const SelectionTools = memo(
 
     return (
       <div
-        className="absolute p-3 rounded-xl bg-white shadow-sm border flex select-none"
+        className="absolute p-3 rounded-xl glass shadow-medium border border-white/30 flex select-none backdrop-blur-lg hover:shadow-strong transition-all duration-300"
         style={{
           transform: `translate(
                 calc(${x}px - 50%),
@@ -100,24 +100,39 @@ export const SelectionTools = memo(
       >
         <ColorPicker onChange={setFill} />
 
-        <div className="flex flex-col gap-y-0.5 ">
+        <div className="flex flex-col gap-y-1">
           <Hint label="Bring Forward">
-            <Button onClick={moveToFront} variant={"draw"} size={"icon"}>
-              <BringToFront />
+            <Button
+              onClick={moveToFront}
+              variant={"draw"}
+              size={"icon"}
+              className="hover:bg-blue-100"
+            >
+              <BringToFront className="h-4 w-4" />
             </Button>
           </Hint>
 
           <Hint label="Send Backward" side="bottom">
-            <Button onClick={moveToBack} variant={"draw"} size={"icon"}>
-              <SendToBack />
+            <Button
+              onClick={moveToBack}
+              variant={"draw"}
+              size={"icon"}
+              className="hover:bg-blue-100"
+            >
+              <SendToBack className="h-4 w-4" />
             </Button>
           </Hint>
         </div>
 
-        <div className="flex items-center border-l border-neutral-200 pl-2 ml-2">
+        <div className="flex items-center border-l border-gray-300 pl-2 ml-2">
           <Hint label="Delete">
-            <Button variant={"draw"} size={"icon"} onClick={deleteLayers}>
-              <Trash2 />
+            <Button
+              variant={"draw"}
+              size={"icon"}
+              onClick={deleteLayers}
+              className="hover:bg-red-100 hover:text-red-600"
+            >
+              <Trash2 className="h-4 w-4" />
             </Button>
           </Hint>
         </div>

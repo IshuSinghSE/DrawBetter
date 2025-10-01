@@ -579,6 +579,64 @@ const Canvas = ({ drawId }: CanvasProps) => {
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       switch (e.key) {
+  
+        case "v":
+        case "V": {
+          e.preventDefault();
+          setCanvasState({ mode: CanvasMode.None });
+          break;
+        }
+        case "h":
+        case "H": {
+          e.preventDefault();
+          setCanvasState({ mode: CanvasMode.Panning });
+          break;
+        }
+        case "t":
+        case "T": {
+          e.preventDefault();
+          setCanvasState({
+            mode: CanvasMode.Inserting,
+            layerType: LayerType.Text,
+          });
+          break;
+        }
+        case "n":
+        case "N": {
+          e.preventDefault();
+          setCanvasState({
+            mode: CanvasMode.Inserting,
+            layerType: LayerType.Note,
+          });
+          break;
+        }
+        case "r":
+        case "R": {
+          e.preventDefault();
+          setCanvasState({
+            mode: CanvasMode.Inserting,
+            layerType: LayerType.Rectangle,
+          });
+          break;
+        }
+        case "o":
+        case "O": {
+          e.preventDefault();
+          setCanvasState({
+            mode: CanvasMode.Inserting,
+            layerType: LayerType.Ellipse,
+          });
+          break;
+        }
+        case "p":
+        case "P": {
+          e.preventDefault();
+          setCanvasState({
+            mode: CanvasMode.Pencil,
+          });
+          break;
+        }
+        
         case "z": {
           if (e.ctrlKey || e.metaKey) {
             if (e.shiftKey) {
@@ -589,6 +647,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
             break;
           }
         }
+        // Zoom shortcuts
         case "=":
         case "+": {
           if (e.ctrlKey || e.metaKey) {
@@ -624,7 +683,7 @@ const Canvas = ({ drawId }: CanvasProps) => {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [deleteLayers, history]);
+  }, [deleteLayers, history, setCanvasState]);
 
   return (
     <main

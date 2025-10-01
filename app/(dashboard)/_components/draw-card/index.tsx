@@ -62,16 +62,18 @@ export const DrawCard = ({
   return (
     <Link href={`/draw/${id}`}>
       <div
-        className="group aspect-[100/127] border rounded-lg
-           flex flex-col overflow-hidden justify-between
+        className="group aspect-[100/127] border border-gray-200 rounded-xl
+           flex flex-col overflow-hidden justify-between shadow-soft
+           hover:shadow-strong transition-all duration-300 hover:scale-[1.02] 
+           hover:border-blue-300 bg-white
            "
       >
-        <div className="relative flex-1 bg-amber-50">
+        <div className="relative flex-1 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
           <Image src={imageUrl} alt={title} fill className="object-fit" />
           <Overlay />
           <Actions id={id} title={title} side="right">
-            <button className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-2 outline-none">
-              <MoreHorizontal className="text-white opacity-75 hover:opacity-100 transition-opacity" />
+            <button className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 px-3 py-2 outline-none bg-black/10 backdrop-blur-sm rounded-lg hover:bg-black/20">
+              <MoreHorizontal className="text-white drop-shadow-lg" />
             </button>
           </Actions>
         </div>
@@ -91,11 +93,31 @@ export const DrawCard = ({
 DrawCard.Skeleton = function DrawCardSkeleton() {
   return (
     <div
-      className="aspect-[100/127] rounded-lg
-           overflow-hidden justify-between
+      className="aspect-[100/127] border border-gray-200 rounded-xl
+           flex flex-col overflow-hidden justify-between shadow-soft bg-white
            "
     >
-      <Skeleton className="h-full w-full" />
+      <div className="relative flex-1 bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50">
+        <Skeleton className="h-full w-full" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <Image
+              src="/logo.svg"
+              alt="Loading"
+              width={40}
+              height={40}
+              className="animate-pulse opacity-50"
+            />
+            <span className="text-xs text-muted-foreground animate-pulse font-medium">
+              Loading...
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="p-4 space-y-2 border-t border-gray-100">
+        <Skeleton className="h-4 w-3/4 rounded-lg" />
+        <Skeleton className="h-3 w-1/2 rounded-lg" />
+      </div>
     </div>
   );
 };

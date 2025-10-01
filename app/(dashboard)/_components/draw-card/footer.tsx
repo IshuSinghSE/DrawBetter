@@ -19,29 +19,33 @@ const Footer = ({
   onClick,
   disabled,
 }: FooterProps) => {
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     e.stopPropagation();
     onClick();
-  }
+  };
 
   return (
-    <div className="relative bg-white p-3">
-      <p className="text-[13px] truncate max-w-[calc(100%-20px)]">{title}</p>
-      <p className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] text-muted-foreground truncate">
+    <div className="relative bg-white p-4 border-t border-gray-100">
+      <p className="text-[14px] font-semibold truncate max-w-[calc(100%-20px)] text-gray-800">
+        {title}
+      </p>
+      <p className="opacity-0 group-hover:opacity-100 transition-opacity text-[12px] text-muted-foreground truncate mt-1">
         {authorLabel}, {createdAtLabel}
       </p>
       <button
         disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "opacity-0 group-hover:opacity-100 transition absolute top-3 right-3 text-muted-foreground hover:text-blue-600",
+          "opacity-0 group-hover:opacity-100 transition-all duration-200 absolute top-4 right-4 text-gray-400 hover:text-yellow-500 hover:scale-110",
           disabled && "cursor-not-allowed opacity-75"
         )}
       >
         <Star
-          className={cn("h-4 w-4", isFavorite && "fill-blue-600 text-blue-600")}
+          className={cn(
+            "h-5 w-5 transition-all duration-200",
+            isFavorite && "fill-yellow-500 text-yellow-500 animate-pulse-glow"
+          )}
         />
       </button>
     </div>
