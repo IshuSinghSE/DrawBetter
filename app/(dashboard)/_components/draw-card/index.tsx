@@ -91,11 +91,31 @@ export const DrawCard = ({
 DrawCard.Skeleton = function DrawCardSkeleton() {
   return (
     <div
-      className="aspect-[100/127] rounded-lg
-           overflow-hidden justify-between
+      className="aspect-[100/127] border rounded-lg
+           flex flex-col overflow-hidden justify-between
            "
     >
-      <Skeleton className="h-full w-full" />
+      <div className="relative flex-1 bg-amber-50">
+        <Skeleton className="h-full w-full" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <Image
+              src="/logo.svg"
+              alt="Loading"
+              width={40}
+              height={40}
+              className="animate-pulse opacity-50"
+            />
+            <span className="text-xs text-muted-foreground animate-pulse">
+              Loading...
+            </span>
+          </div>
+        </div>
+      </div>
+      <div className="p-3 space-y-2">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
     </div>
   );
 };
