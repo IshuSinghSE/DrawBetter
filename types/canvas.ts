@@ -16,6 +16,13 @@ export enum LayerType {
   Path,
   Text,
   Note,
+  Triangle,
+  Diamond,
+  Hexagon,
+  Star,
+  Arrow,
+  Heart,
+  Pentagon,
 }
 
 export type RectangleLayer = {
@@ -66,6 +73,76 @@ export type NoteLayer = {
   value?: string;
 };
 
+export type TriangleLayer = {
+  type: LayerType.Triangle;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type DiamondLayer = {
+  type: LayerType.Diamond;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type HexagonLayer = {
+  type: LayerType.Hexagon;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type StarLayer = {
+  type: LayerType.Star;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type ArrowLayer = {
+  type: LayerType.Arrow;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type HeartLayer = {
+  type: LayerType.Heart;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
+export type PentagonLayer = {
+  type: LayerType.Pentagon;
+  x: number;
+  y: number;
+  height: number;
+  width: number;
+  fill: Color;
+  value?: string;
+};
+
 export type Point = {
   x: number;
   y: number;
@@ -108,7 +185,14 @@ export type CanvasState =
         | LayerType.Ellipse
         | LayerType.Rectangle
         | LayerType.Note
-        | LayerType.Text;
+        | LayerType.Text
+        | LayerType.Triangle
+        | LayerType.Diamond
+        | LayerType.Hexagon
+        | LayerType.Star
+        | LayerType.Arrow
+        | LayerType.Heart
+        | LayerType.Pentagon;
     }
   | {
       mode: CanvasMode.Resizing;
@@ -139,4 +223,11 @@ export type Layer =
   | EllipseLayer
   | PathLayer
   | TextLayer
-  | NoteLayer;
+  | NoteLayer
+  | TriangleLayer
+  | DiamondLayer
+  | HexagonLayer
+  | StarLayer
+  | ArrowLayer
+  | HeartLayer
+  | PentagonLayer;

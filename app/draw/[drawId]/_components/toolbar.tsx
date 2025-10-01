@@ -1,13 +1,12 @@
 import React from "react";
 import { ToolButton } from "./tool-button";
 import { ExportDialog } from "./export-dialog";
+import { ShapesDropdown } from "./shapes-dropdown";
 import {
-  Circle,
   Hand,
   MousePointer2,
   Pencil,
   Redo2,
-  Square,
   StickyNote,
   Type,
   Undo2,
@@ -90,34 +89,9 @@ const ToolBar = ({
           }
         />
 
-        <ToolButton
-          label="Rectangle (R)"
-          icon={Square}
-          onClick={() =>
-            setCanvasState({
-              mode: CanvasMode.Inserting,
-              layerType: LayerType.Rectangle,
-            })
-          }
-          isActive={
-            canvasState.mode === CanvasMode.Inserting &&
-            canvasState.layerType === LayerType.Rectangle
-          }
-        />
-
-        <ToolButton
-          label="Ellipse (O)"
-          icon={Circle}
-          onClick={() =>
-            setCanvasState({
-              mode: CanvasMode.Inserting,
-              layerType: LayerType.Ellipse,
-            })
-          }
-          isActive={
-            canvasState.mode === CanvasMode.Inserting &&
-            canvasState.layerType === LayerType.Ellipse
-          }
+        <ShapesDropdown
+          canvasState={canvasState}
+          setCanvasState={setCanvasState}
         />
 
         <ToolButton
@@ -132,7 +106,7 @@ const ToolBar = ({
         />
       </div>
 
-      <div className="glass rounded-xl p-2 flex flex-col items-center shadow-medium hover:shadow-strong transition-all duration-300">
+      <div className="glass rounded-xl p-2 flex flex-col items-center shadow-medium hover:shadow-strong transition-all duration-300 z-10">
         <ToolButton
           label="Undo (Ctrl+Z)"
           icon={Undo2}

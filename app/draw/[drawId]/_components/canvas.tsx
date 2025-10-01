@@ -108,7 +108,14 @@ const Canvas = ({ drawId }: CanvasProps) => {
         | LayerType.Ellipse
         | LayerType.Rectangle
         | LayerType.Text
-        | LayerType.Note,
+        | LayerType.Note
+        | LayerType.Triangle
+        | LayerType.Diamond
+        | LayerType.Hexagon
+        | LayerType.Star
+        | LayerType.Arrow
+        | LayerType.Heart
+        | LayerType.Pentagon,
       position: Point
     ) => {
       const liveLayers = storage.get("layers");

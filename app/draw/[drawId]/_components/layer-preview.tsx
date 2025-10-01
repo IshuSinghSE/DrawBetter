@@ -8,6 +8,13 @@ import { Ellipse } from "./ellipse";
 import { Text } from "./text";
 import { Note } from "./note";
 import { Path } from "./path";
+import { Triangle } from "./triangle";
+import { Diamond } from "./diamond";
+import { Star } from "./star";
+import { Hexagon } from "./hexagon";
+import { Arrow } from "./arrow";
+import { Heart } from "./heart";
+import { Pentagon } from "./pentagon";
 import { colorToCss } from "@/lib/utils";
 
 interface LayerPreviewProps {
@@ -67,6 +74,69 @@ export const LayerPreview = memo(
     case LayerType.Rectangle:
       return (
         <Rectangle
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Triangle:
+      return (
+        <Triangle
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Diamond:
+      return (
+        <Diamond
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Star:
+      return (
+        <Star
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Hexagon:
+      return (
+        <Hexagon
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Arrow:
+      return (
+        <Arrow
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Heart:
+      return (
+        <Heart
+          id={id}
+          layer={layer}
+          onPointerDown={onLayerPointerDown}
+          selectionColor={selectionColor}
+        />
+      );
+    case LayerType.Pentagon:
+      return (
+        <Pentagon
           id={id}
           layer={layer}
           onPointerDown={onLayerPointerDown}
