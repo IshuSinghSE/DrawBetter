@@ -34,14 +34,18 @@ export const NewDrawButton = ({ orgId, disabled }: NewDrawButtonProps) => {
       disabled={pending || disabled}
       onClick={OnClick}
       className={cn(
-        "col-span-1 aspect-[100/127] bg-blue-600 rounded-lg hover:bg-blue-800 flex flex-col items-center justify-center py-6",
+        "col-span-1 aspect-[100/127] bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 flex flex-col items-center justify-center py-6 shadow-soft hover:shadow-strong transition-all duration-300 group hover:scale-[1.02] border border-blue-500",
         (pending || disabled) &&
-          "opacity-75 hover:bg-blue-600 cursor-not-allowed"
+          "opacity-75 hover:from-blue-600 hover:to-blue-700 cursor-not-allowed hover:scale-100"
       )}
     >
       <div />
-      <Plus className="h-12 w-12 text-white stroke-1" />
-      <p className="text-xs text-white font-light">New Draw</p>
+      <div className="bg-white/10 rounded-full p-3 mb-3 group-hover:bg-white/20 transition-colors duration-200">
+        <Plus className="h-12 w-12 text-white stroke-[1.5]" />
+      </div>
+      <p className="text-sm text-white font-semibold tracking-wide">
+        Create New Draw
+      </p>
     </button>
   );
 };

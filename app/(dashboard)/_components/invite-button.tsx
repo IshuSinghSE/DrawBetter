@@ -13,7 +13,10 @@ export const InviteButton = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button
+          variant="outline"
+          className="shadow-soft hover:shadow-md transition-all duration-200 border-gray-300 hover:border-blue-400"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Invite Members
         </Button>
@@ -24,9 +27,7 @@ export const InviteButton = () => {
         </VisuallyHidden>
         <div className="w-full h-full min-h-[600px] overflow-auto lg:overflow-visible">
           <div className="w-full lg:max-w-5xl lg:mx-auto">
-            <OrganizationProfile 
-              
-            routing="hash" />
+            <OrganizationProfile routing="hash" />
           </div>
         </div>
       </DialogContent>

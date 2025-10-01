@@ -33,10 +33,10 @@ const ToolBar = ({
   return (
     <div
       className="absolute top-[50%]
-    -translate-y-[50%] left-2 flex flex-col gap-y-4
+    -translate-y-[50%] left-2 flex flex-col gap-y-4 animate-slide-in
     "
     >
-      <div className="bg-white rounded-md p-1.5 flex flex-col gap-y-1 items-center shadow-md">
+      <div className="glass rounded-xl p-2 flex flex-col gap-y-1.5 items-center shadow-medium hover:shadow-strong transition-all duration-300">
         <ToolButton
           label="Select (V)"
           icon={MousePointer2}
@@ -129,7 +129,7 @@ const ToolBar = ({
         />
       </div>
 
-      <div className="bg-white rounded-md p-1.5 flex flex-col items-center shadow-md">
+      <div className="glass rounded-xl p-2 flex flex-col items-center shadow-medium hover:shadow-strong transition-all duration-300">
         <ToolButton
           label="Undo (Ctrl+Z)"
           icon={Undo2}
@@ -155,11 +155,11 @@ export const ToolBarSkeleton = () => {
     <div
       className="absolute top-[50%]
     -translate-y-[50%] left-2 flex flex-col gap-y-4
-    bg-white 
+    glass
     h-[360px]
     w-[52px]
-    shadow-md
-    rounded-md
+    shadow-medium
+    rounded-xl
     "
     />
   );
