@@ -66,7 +66,6 @@ const Info = ({ drawId }: InfoProps) => {
 
       <TabSeparator />
       
-      {/* Export Button */}
       <ExportDialog 
         drawTitle={data.title} 
         variant="outline" 

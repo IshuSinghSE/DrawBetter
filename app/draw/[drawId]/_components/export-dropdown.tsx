@@ -20,7 +20,6 @@ interface ExportDropdownProps {
 }
 
 export const ExportDropdown = ({ 
-  drawTitle = "drawing", 
   variant = "draw",
   size = "icon",
   showLabel = false,
@@ -32,37 +31,29 @@ export const ExportDropdown = ({
   const handleExport = async (format: 'svg' | 'png' | 'jpg' | 'pdf') => {
     if (isExporting) return;
     
-    console.log(`🎯 Starting ${format} export...`);
     setIsExporting(true);
     setExportingFormat(format);
     
     try {
       switch (format) {
         case 'svg':
-          console.log('📄 Calling exportCanvasSVG...');
           await exportCanvasSVG();
           break;
         case 'png':
-          console.log('🖼️ Calling exportCanvasPNG...');
           await exportCanvasPNG();
           break;
         case 'jpg':
-          console.log('📸 Calling exportCanvasJPG...');
           await exportCanvasJPG();
           break;
         case 'pdf':
-          console.log('📋 Calling exportCanvasPDF...');
           await exportCanvasPDF();
           break;
         default:
           throw new Error(`Unsupported format: ${format}`);
       }
       
-      console.log(`✅ ${format.toUpperCase()} export successful: ${drawTitle}.${format}`);
     } catch (error) {
-      console.error(`❌ Export failed for ${format}:`, error);
       
-      // Show user-friendly error message
       const errorMessage = error instanceof Error ? error.message : "Export failed. Please try again.";
       
       if (typeof window !== 'undefined') {
@@ -96,7 +87,6 @@ export const ExportDropdown = ({
       <DropdownMenuContent align="end" className="w-40" side="bottom" sideOffset={5}>
         <DropdownMenuItem 
           onClick={() => {
-            console.log('📄 SVG export clicked');
             handleExport('svg');
           }}
           disabled={isExporting}
@@ -107,7 +97,6 @@ export const ExportDropdown = ({
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => {
-            console.log('🖼️ PNG export clicked');
             handleExport('png');
           }}
           disabled={isExporting}
@@ -118,7 +107,6 @@ export const ExportDropdown = ({
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => {
-            console.log('📸 JPG export clicked');
             handleExport('jpg');
           }}
           disabled={isExporting}
@@ -129,7 +117,6 @@ export const ExportDropdown = ({
         </DropdownMenuItem>
         <DropdownMenuItem 
           onClick={() => {
-            console.log('📋 PDF export clicked');
             handleExport('pdf');
           }}
           disabled={isExporting}

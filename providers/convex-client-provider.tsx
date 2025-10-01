@@ -13,7 +13,6 @@ const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL!;
 
 const convex = new ConvexReactClient(convexUrl);
 
-// Create a separate component that uses useAuth inside ClerkProvider
 const ConvexWrapper = ({ children }: { children: React.ReactNode }) => {
   const auth = useAuth();
 

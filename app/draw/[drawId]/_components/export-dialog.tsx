@@ -45,7 +45,7 @@ export const ExportDialog = ({
   const [isExporting, setIsExporting] = useState(false);
   const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null);
   
-  // Export settings
+
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat>('png');
   const [selectedQuality, setSelectedQuality] = useState<ExportQuality>('high');
   const [selectedTheme, setSelectedTheme] = useState<ExportTheme>('light');
@@ -89,38 +89,31 @@ export const ExportDialog = ({
   const handleExport = async () => {
     if (isExporting) return;
     
-    console.log(`🎯 Starting ${selectedFormat} export with ${selectedQuality} quality and ${selectedTheme} theme...`);
     setIsExporting(true);
     setExportingFormat(selectedFormat);
     
     try {
       switch (selectedFormat) {
         case 'svg':
-          console.log('📄 Calling exportCanvasSVG...');
           await exportCanvasSVG(selectedTheme, drawTitle);
           break;
         case 'png':
-          console.log('🖼️ Calling exportCanvasPNG...');
           await exportCanvasPNG(selectedQuality, selectedTheme, drawTitle);
           break;
         case 'jpg':
-          console.log('📸 Calling exportCanvasJPG...');
           await exportCanvasJPG(selectedQuality, selectedTheme, drawTitle);
           break;
         case 'pdf':
-          console.log('📋 Calling exportCanvasPDF...');
           await exportCanvasPDF(selectedQuality, selectedTheme, drawTitle);
           break;
         default:
           throw new Error(`Unsupported format: ${selectedFormat}`);
       }
       
-      console.log(`✅ ${selectedFormat.toUpperCase()} export successful: ${drawTitle}.${selectedFormat}`);
-      setOpen(false); // Close dialog on success
+      setOpen(false); 
     } catch (error) {
-      console.error(`❌ Export failed for ${selectedFormat}:`, error);
       
-      // Show user-friendly error message
+
       const errorMessage = error instanceof Error ? error.message : "Export failed. Please try again.";
       
       if (typeof window !== 'undefined') {
